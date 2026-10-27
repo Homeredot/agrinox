@@ -1,0 +1,65 @@
+{
+  "model_version": "fastai-potato-plantvillage-v2",
+  "framework": "fastai",
+  "architecture": "resnet18 transfer learning",
+  "image_size": 160,
+  "classes": [
+    "Potato___Early_blight",
+    "Potato___Late_blight",
+    "Potato___healthy",
+    "Unsupported_or_not_potato"
+  ],
+  "dataset": {
+    "name": "PlantVillage / Plant Disease Recognition (Kaggle emmarex/plantdisease)",
+    "source": "https://www.kaggle.com/datasets/emmarex/plantdisease/",
+    "root": "C:\\Users\\arhen\\Downloads\\agri_ai\\PlantVillage",
+    "unique_class_counts": {
+      "Potato___Early_blight": 1000,
+      "Potato___Late_blight": 1000,
+      "Potato___healthy": 152,
+      "Unsupported_or_not_potato": 1200
+    },
+    "duplicates_excluded_within_selected_tree": 0,
+    "nested_dataset_trees_excluded": true,
+    "unsupported_sampling": "Deterministic sample of direct pepper and tomato class folders with seed 42."
+  },
+  "training_images": 2682,
+  "validation_images": 670,
+  "validation_design": "File-level random 80/20 held-out split with seed 42; validation images are not used for gradient updates.",
+  "validation_loss": 0.17491427063941956,
+  "validation_accuracy": 0.9522387981414795,
+  "validation_error_rate": 0.04776119440793991,
+  "confusion_matrix": [
+    [
+      191,
+      2,
+      0,
+      1
+    ],
+    [
+      8,
+      181,
+      6,
+      10
+    ],
+    [
+      0,
+      0,
+      27,
+      2
+    ],
+    [
+      1,
+      2,
+      0,
+      239
+    ]
+  ],
+  "trained_at": "2026-10-23T09:43:29.855230+00:00",
+  "limitations": [
+    "PlantVillage-style images may not represent Rwanda field backgrounds, lighting, cultivars or all potato disorders.",
+    "The healthy class has 152 images, compared with 1000 early-blight and 1000 late-blight images.",
+    "The unsupported class improves rejection of included pepper and tomato images but cannot represent every possible non-potato photograph.",
+    "Validate on an independent Rwanda field dataset before clinical or automatic treatment use."
+  ]
+}

@@ -1,0 +1,1092 @@
+@import "tailwindcss";
+
+:root {
+  --forest: #153d2c;
+  --green: #2f7d4a;
+  --lime: #b8d96b;
+  --cream: #f5f1e8;
+  --gold: #d7a53f;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+body {
+  margin: 0;
+  color: #f5f7f5;
+  background: #191b1a;
+  font-family: Arial, Helvetica, sans-serif;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+}
+.app-theme :is(main, form, fieldset) {
+  min-width: 0;
+}
+.app-theme :is(input, select, textarea) {
+  max-width: 100%;
+}
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+.field-grid {
+  background-image:
+    linear-gradient(rgba(121, 207, 104, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(121, 207, 104, 0.055) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+::selection {
+  background: #3a7850;
+  color: white;
+}
+
+.mobile-app-nav {
+  padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+}
+.mobile-app-tab {
+  display: flex;
+  min-width: 0;
+  min-height: 3.55rem;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.2rem;
+  border-radius: 1rem;
+  color: #8f9991;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+.mobile-app-tab span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mobile-app-tab-active {
+  background: #304333;
+  color: #aee1a6;
+}
+.mobile-app-tab:active {
+  transform: scale(0.94);
+}
+
+.weather-atmosphere::before {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  inset: 64px 0 0 260px;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 78% 8%,
+      rgba(87, 113, 218, 0.13),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 30% 22%,
+      rgba(69, 152, 173, 0.08),
+      transparent 28%
+    );
+}
+.weather-theme-sunny::before {
+  background:
+    radial-gradient(
+      circle at 82% 6%,
+      rgba(255, 203, 83, 0.14),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 32% 24%,
+      rgba(72, 153, 209, 0.08),
+      transparent 30%
+    );
+}
+.weather-theme-rainy::before,
+.weather-theme-stormy::before {
+  background:
+    radial-gradient(
+      circle at 76% 12%,
+      rgba(61, 100, 175, 0.17),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 28% 28%,
+      rgba(45, 136, 161, 0.09),
+      transparent 30%
+    );
+}
+.weather-theme-foggy::before {
+  background: radial-gradient(
+    ellipse at 65% 16%,
+    rgba(183, 196, 201, 0.12),
+    transparent 48%
+  );
+}
+.weather-kicker {
+  border: 1px solid rgba(133, 155, 255, 0.2);
+  background: rgba(74, 92, 171, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.weather-glass {
+  border: 1px solid rgba(152, 172, 190, 0.16);
+  background: linear-gradient(
+    145deg,
+    rgba(39, 45, 45, 0.94),
+    rgba(29, 35, 36, 0.92)
+  );
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(16px);
+}
+.weather-hero {
+  isolation: isolate;
+  border: 1px solid rgba(151, 181, 255, 0.3);
+  background: linear-gradient(
+    125deg,
+    rgba(24, 61, 99, 0.97),
+    rgba(41, 63, 104, 0.95) 52%,
+    rgba(29, 75, 87, 0.92)
+  );
+  box-shadow:
+    0 28px 70px rgba(8, 18, 35, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.weather-hero-sunny {
+  border-color: rgba(255, 220, 135, 0.34);
+  background: linear-gradient(125deg, #236ba0, #387ead 54%, #78a6aa);
+}
+.weather-hero-cloudy {
+  border-color: rgba(169, 192, 215, 0.28);
+  background: linear-gradient(125deg, #3c566c, #4a6074 54%, #526f77);
+}
+.weather-hero-rainy {
+  background: linear-gradient(125deg, #173d63, #293f68 52%, #1d4b57);
+}
+.weather-hero-stormy {
+  border-color: rgba(157, 141, 224, 0.35);
+  background: linear-gradient(125deg, #20243e, #303452 52%, #1c3844);
+}
+.weather-hero-foggy {
+  border-color: rgba(204, 216, 220, 0.24);
+  background: linear-gradient(125deg, #58696d, #68777a 52%, #566c70);
+}
+.weather-hero
+  > *:not(
+    .weather-sun,
+    .weather-cloud,
+    .weather-rain-lines,
+    .weather-lightning-flash,
+    .weather-haze
+  ) {
+  position: relative;
+  z-index: 2;
+}
+.weather-sun {
+  display: none;
+  position: absolute;
+  width: 210px;
+  height: 210px;
+  right: -54px;
+  top: -76px;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 224, 139, 0.34),
+    rgba(255, 217, 106, 0.08) 48%,
+    transparent 70%
+  );
+  filter: blur(2px);
+}
+.weather-hero-sunny .weather-sun,
+.weather-hero-cloudy .weather-sun {
+  display: block;
+}
+.weather-hero-cloudy .weather-sun {
+  opacity: 0.38;
+}
+.weather-cloud {
+  display: none;
+  position: absolute;
+  z-index: 0;
+  width: 190px;
+  height: 54px;
+  border-radius: 999px;
+  background: rgba(220, 235, 255, 0.07);
+  filter: blur(1px);
+  animation: weather-drift 16s ease-in-out infinite alternate;
+}
+.weather-hero-cloudy .weather-cloud,
+.weather-hero-rainy .weather-cloud,
+.weather-hero-stormy .weather-cloud,
+.weather-hero-foggy .weather-cloud {
+  display: block;
+}
+.weather-hero-foggy .weather-cloud {
+  opacity: 0.25;
+  filter: blur(5px);
+}
+.weather-cloud::before,
+.weather-cloud::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: inherit;
+}
+.weather-cloud::before {
+  width: 78px;
+  height: 78px;
+  left: 34px;
+  bottom: 8px;
+}
+.weather-cloud::after {
+  width: 96px;
+  height: 96px;
+  right: 22px;
+  bottom: 2px;
+}
+.weather-cloud-one {
+  right: 12%;
+  bottom: 34%;
+}
+.weather-cloud-two {
+  width: 130px;
+  left: 41%;
+  top: 16%;
+  opacity: 0.55;
+  animation-delay: -6s;
+}
+.weather-rain-lines {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.11;
+  background-image: repeating-linear-gradient(
+    112deg,
+    transparent 0 25px,
+    rgba(178, 218, 255, 0.55) 26px 27px,
+    transparent 28px 48px
+  );
+  background-size: 180% 180%;
+  animation: weather-rain 12s linear infinite;
+}
+.weather-hero-rainy .weather-rain-lines,
+.weather-hero-stormy .weather-rain-lines {
+  display: block;
+}
+.weather-lightning-flash {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 72% 8%,
+    rgba(221, 211, 255, 0.34),
+    transparent 28%
+  );
+  animation: weather-lightning 7s ease-in-out infinite;
+}
+.weather-hero-stormy .weather-lightning-flash {
+  display: block;
+}
+.weather-haze {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(239, 246, 246, 0.06) 0 18px,
+    transparent 18px 42px
+  );
+  filter: blur(7px);
+  animation: weather-haze 12s ease-in-out infinite alternate;
+}
+.weather-hero-foggy .weather-haze {
+  display: block;
+}
+.weather-current-icon {
+  display: grid;
+  width: 84px;
+  height: 84px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 26px;
+  background: rgba(4, 16, 35, 0.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(8px);
+}
+.weather-current-icon-sunny {
+  color: #ffe47d;
+  background: rgba(255, 202, 70, 0.14);
+}
+.weather-current-icon-cloudy,
+.weather-current-icon-foggy {
+  color: #e4eff6;
+  background: rgba(213, 230, 239, 0.1);
+}
+.weather-current-icon-rainy {
+  color: #80d5ff;
+}
+.weather-current-icon-stormy {
+  color: #d2c1ff;
+  background: rgba(132, 105, 213, 0.16);
+}
+.weather-metric {
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: linear-gradient(
+    145deg,
+    rgba(8, 22, 42, 0.28),
+    rgba(16, 30, 45, 0.18)
+  );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  backdrop-filter: blur(12px);
+}
+.weather-warning-card {
+  border: 1px solid rgba(218, 178, 91, 0.28);
+  background: linear-gradient(
+    145deg,
+    rgba(68, 55, 29, 0.64),
+    rgba(39, 38, 31, 0.9)
+  );
+  box-shadow: inset 0 1px 0 rgba(255, 225, 151, 0.05);
+}
+.weather-hour-card,
+.weather-day-card {
+  border: 1px solid rgba(124, 151, 183, 0.15);
+  background: linear-gradient(
+    160deg,
+    rgba(43, 53, 65, 0.94),
+    rgba(31, 38, 41, 0.95)
+  );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+.weather-hour-card:hover,
+.weather-day-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(125, 157, 238, 0.42);
+  background: linear-gradient(
+    160deg,
+    rgba(50, 65, 86, 0.98),
+    rgba(32, 42, 47, 0.98)
+  );
+}
+.weather-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #586b94 transparent;
+  overscroll-behavior-inline: contain;
+  touch-action: pan-x;
+}
+@keyframes weather-drift {
+  from {
+    transform: translateX(-12px);
+  }
+  to {
+    transform: translateX(18px);
+  }
+}
+@keyframes weather-rain {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -260px 220px;
+  }
+}
+@keyframes weather-lightning {
+  0%,
+  88%,
+  100% {
+    opacity: 0;
+  }
+  90% {
+    opacity: 0.85;
+  }
+  92% {
+    opacity: 0.12;
+  }
+  94% {
+    opacity: 0.65;
+  }
+  96% {
+    opacity: 0;
+  }
+}
+@keyframes weather-haze {
+  from {
+    transform: translateX(-2%);
+    opacity: 0.45;
+  }
+  to {
+    transform: translateX(2%);
+    opacity: 0.8;
+  }
+}
+@media (max-width: 1023px) {
+  .weather-atmosphere::before {
+    left: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .weather-cloud,
+  .weather-rain-lines,
+  .weather-lightning-flash,
+  .weather-haze {
+    animation: none;
+  }
+  .weather-hour-card,
+  .weather-day-card {
+    transition: none;
+  }
+}
+
+.crop-plan-atmosphere::before {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  inset: 64px 0 0 260px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 80% 4%, rgba(148, 192, 91, 0.11), transparent 30%),
+    radial-gradient(circle at 34% 34%, rgba(73, 124, 84, 0.08), transparent 36%);
+}
+.crop-plan-card {
+  border: 1px solid rgba(139, 158, 131, 0.17);
+  background: linear-gradient(150deg, rgba(39, 44, 40, 0.97), rgba(29, 33, 30, 0.96));
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+.crop-plan-result {
+  border: 1px solid rgba(174, 215, 116, 0.25);
+  background:
+    linear-gradient(125deg, rgba(43, 79, 50, 0.97), rgba(36, 66, 48, 0.96) 54%, rgba(45, 74, 42, 0.94));
+  box-shadow:
+    0 24px 60px rgba(10, 24, 13, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+@media (max-width: 1023px) {
+  .crop-plan-atmosphere::before {
+    left: 0;
+  }
+}
+
+/* Farmer-first mobile defaults: readable controls, dependable taps and no iOS
+   focus zoom. The bilingual dictionaries are bundled, so switching languages
+   never makes a network request. */
+@media (max-width: 640px) {
+  .weather-scroll {
+    scrollbar-width: none;
+  }
+  .weather-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  [data-language] input,
+  [data-language] select,
+  [data-language] textarea {
+    font-size: 16px;
+  }
+  [data-language] button,
+  [data-language] a,
+  [data-language] label[role="button"] {
+    touch-action: manipulation;
+  }
+  [data-language] button:not([aria-hidden="true"]):not([data-compact-control="true"]) {
+    min-height: 44px;
+  }
+  .auth-form-panel {
+    z-index: 5;
+    margin-top: -1.25rem;
+    border-radius: 1.5rem 1.5rem 0 0;
+  }
+  .app-theme :is(section, article, details)[class*="rounded-3xl"] {
+    border-radius: 1.25rem;
+  }
+  .mobile-secondary {
+    display: none !important;
+  }
+  .mobile-compact-card {
+    padding: 1rem !important;
+  }
+}
+
+.app-theme[data-theme="light"] .mobile-app-nav {
+  border-color: #bdc9be !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 0 16px 42px rgba(39, 65, 46, 0.18) !important;
+}
+.app-theme[data-theme="light"] .mobile-app-tab {
+  color: #647168;
+}
+.app-theme[data-theme="light"] .mobile-app-tab-active {
+  background: #dcebd9 !important;
+  color: #1e5a32 !important;
+}
+
+@media (prefers-reduced-data: reduce) {
+  .weather-cloud,
+  .weather-rain-lines,
+  .weather-lightning-flash,
+  .weather-haze {
+    display: none;
+  }
+}
+
+.dashboard-atmosphere::before {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  inset: 64px 0 0 260px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 82% 5%, rgba(134, 190, 105, 0.1), transparent 28%),
+    radial-gradient(circle at 22% 30%, rgba(70, 125, 91, 0.08), transparent 34%);
+}
+
+@media (max-width: 1023px) {
+  .dashboard-atmosphere::before {
+    left: 0;
+  }
+}
+
+/* Application themes. Grey intentionally keeps the original Agrinox palette. */
+.app-theme {
+  min-height: 100vh;
+  background: #191b1a;
+  color: #f5f7f5;
+}
+
+.app-theme,
+.app-theme button,
+.app-theme input,
+.app-theme select,
+.app-theme textarea,
+.app-theme section,
+.app-theme article,
+.app-theme aside,
+.app-theme header {
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+html[data-theme="dark"] body,
+.app-theme[data-theme="dark"] {
+  background: #070a08;
+  color: #f6faf6;
+}
+
+.app-theme[data-theme="dark"] .dark-shell {
+  background: #070a08 !important;
+  color: #f6faf6 !important;
+}
+
+.app-theme:is([data-theme="dark"], [data-theme="light"]) :is(
+  [class~="bg-[#191b1a]"], [class~="bg-[#191d1a]"], [class~="bg-[#191e1a]"],
+  [class~="bg-[#1a1e1b]"], [class~="bg-[#1b1e1c]"], [class~="bg-[#1b201c]"],
+  [class~="bg-[#1c211d]"], [class~="bg-[#1d1f1e]"], [class~="bg-[#1d211e]"],
+  [class~="bg-[#1d221e]"], [class~="bg-[#1d251f]"]
+) {
+  background-color: var(--theme-background) !important;
+}
+
+.app-theme[data-theme="dark"] {
+  --theme-background: #080b09;
+  --theme-surface: #111613;
+}
+
+.app-theme[data-theme="light"] {
+  --theme-background: #edf2eb;
+  --theme-surface: #ffffff;
+}
+
+.app-theme:is([data-theme="dark"], [data-theme="light"]) :is(
+  [class~="bg-[#202220]"], [class~="bg-[#202420]"], [class~="bg-[#202421]"], [class~="bg-[#202421]/95"],
+  [class~="bg-[#202521]"], [class~="bg-[#202522]"], [class~="bg-[#20271d]"], [class~="bg-[#202722]"],
+  [class~="bg-[#21382b]"], [class~="bg-[#22231f]"], [class~="bg-[#22241f]"], [class~="bg-[#222522]"],
+  [class~="bg-[#222622]"], [class~="bg-[#222623]"], [class~="bg-[#222624]"], [class~="bg-[#222722]"],
+  [class~="bg-[#222723]"], [class~="bg-[#222724]"], [class~="bg-[#222823]"], [class~="bg-[#222a3d]"],
+  [class~="bg-[#222c27]"], [class~="bg-[#232523]"], [class~="bg-[#232622]"], [class~="bg-[#232624]"],
+  [class~="bg-[#232821]"], [class~="bg-[#232824]"], [class~="bg-[#232925]"], [class~="bg-[#232b22]"],
+  [class~="bg-[#242625]"], [class~="bg-[#242725]"], [class~="bg-[#242824]"], [class~="bg-[#242825]"],
+  [class~="bg-[#242925]"], [class~="bg-[#242a25]"], [class~="bg-[#242b23]"], [class~="bg-[#243a36]"],
+  [class~="bg-[#252725]"], [class~="bg-[#252a23]"], [class~="bg-[#252a25]"], [class~="bg-[#252a26]"],
+  [class~="bg-[#252b26]"], [class~="bg-[#252b27]"], [class~="bg-[#252e27]"], [class~="bg-[#253029]"],
+  [class~="bg-[#253229]"], [class~="bg-[#254c2e]"], [class~="bg-[#262923]"], [class~="bg-[#262927]"],
+  [class~="bg-[#263029]"], [class~="bg-[#26343a]"], [class~="bg-[#26372a]"], [class~="bg-[#263829]"],
+  [class~="bg-[#26382d]"], [class~="bg-[#263c29]"], [class~="bg-[#27241c]"], [class~="bg-[#27251f]/80"],
+  [class~="bg-[#272a28]"], [class~="bg-[#272c27]"], [class~="bg-[#272c28]"], [class~="bg-[#272d28]"],
+  [class~="bg-[#27362d]"], [class~="bg-[#27372a]"], [class~="bg-[#274b34]"], [class~="bg-[#282b29]"],
+  [class~="bg-[#282c25]"], [class~="bg-[#282d27]"], [class~="bg-[#282d28]"], [class~="bg-[#282d29]"],
+  [class~="bg-[#282f27]"], [class~="bg-[#292820]"], [class~="bg-[#292a26]"], [class~="bg-[#292b27]"],
+  [class~="bg-[#292c2a]"], [class~="bg-[#292e2a]"], [class~="bg-[#292f28]"], [class~="bg-[#292f2a]"],
+  [class~="bg-[#292f2b]"], [class~="bg-[#293029]"], [class~="bg-[#293126]"], [class~="bg-[#293528]"],
+  [class~="bg-[#29382c]"], [class~="bg-[#293927]"], [class~="bg-[#293b2d]"], [class~="bg-[#29402d]"],
+  [class~="bg-[#294832]"], [class~="bg-[#2a302c]"], [class~="bg-[#2a3042]"], [class~="bg-[#2a3727]"],
+  [class~="bg-[#2a382d]"], [class~="bg-[#2a4532]"], [class~="bg-[#2b302a]"], [class~="bg-[#2b302c]"],
+  [class~="bg-[#2b3226]"], [class~="bg-[#2b3729]"], [class~="bg-[#2b382a]"], [class~="bg-[#2b3927]"],
+  [class~="bg-[#2b392d]"], [class~="bg-[#2b402e]"], [class~="bg-[#2b4432]"], [class~="bg-[#2c392d]"],
+  [class~="bg-[#2d3028]"], [class~="bg-[#2d302e]"], [class~="bg-[#2e3b29]"], [class~="bg-[#2e3c29]"],
+  [class~="bg-[#2e4254]"], [class~="bg-[#2e442f]"]
+) {
+  background-color: var(--theme-surface) !important;
+}
+
+/* Keep image/status overlays dark in every visual theme. */
+.app-theme:is([data-theme="dark"], [data-theme="light"]) :is(
+  [class~="bg-[#101b14]/70"], [class~="bg-[#172019]/80"]
+) {
+  background-color: #080b09 !important;
+}
+
+.app-theme[data-theme="dark"] :is(.weather-glass, .weather-hour-card, .weather-day-card, .crop-plan-card) {
+  background: #111613 !important;
+  border-color: #303a33 !important;
+}
+
+html[data-theme="light"] body,
+.app-theme[data-theme="light"] {
+  background: #edf2eb;
+  color: #18211a;
+}
+
+.app-theme[data-theme="light"] .dark-shell {
+  background: #edf2eb !important;
+  color: #18211a !important;
+}
+
+.app-theme[data-theme="light"] .theme-surface-panel {
+  background: #ffffff !important;
+  border-color: #c5d0c6 !important;
+  color: #18211a !important;
+  box-shadow: 0 10px 28px rgba(39, 65, 46, 0.06) !important;
+}
+
+.app-theme[data-theme="light"] .profile-card {
+  background: #ffffff !important;
+  border-color: #c5d0c6 !important;
+  color: #18211a !important;
+  box-shadow: 0 12px 30px rgba(39, 65, 46, 0.07);
+}
+
+.app-theme[data-theme="light"] .account-menu {
+  background: #ffffff !important;
+  border-color: #bfcbbf !important;
+  color: #18211a !important;
+  box-shadow: 0 20px 55px rgba(33, 55, 39, 0.18) !important;
+}
+
+.app-theme[data-theme="light"] .account-menu [class~="bg-[#292e2a]"] {
+  background: #edf4ec !important;
+}
+
+.app-theme[data-theme="light"] .account-menu button:hover {
+  background: #e5eee4 !important;
+}
+
+.app-theme[data-theme="light"] .account-menu [aria-checked="true"] {
+  background: #d9ead9 !important;
+  color: #194327 !important;
+}
+
+.app-theme[data-theme="light"] .profile-subcard {
+  background: #f2f6f1 !important;
+  border: 1px solid #d6dfd6;
+  color: #263229 !important;
+}
+
+.app-theme[data-theme="light"] .profile-card :is(.text-\[\#dce2dd\], .text-\[\#838c85\], .text-\[\#939d95\]) {
+  color: #5a675d !important;
+}
+
+
+.app-theme[data-theme="light"] :is(input, select, textarea) {
+  background-color: #ffffff !important;
+  border-color: #aebcaf !important;
+  color: #172019 !important;
+}
+
+.app-theme[data-theme="light"] input::placeholder,
+.app-theme[data-theme="light"] textarea::placeholder {
+  color: #6b776d !important;
+}
+
+.app-theme[data-theme="light"] :is(section, article, aside, header, details, div):is(
+  [class*="border-[#3"], [class*="border-[#4"], [class*="border-[#5"]
+) {
+  border-color: #c5d0c6 !important;
+}
+
+.app-theme[data-theme="light"] :is(
+  [class*="text-[#d4d8d5"], [class*="text-[#d7ddd8"], [class*="text-[#e2eadf"],
+  [class*="text-[#e4e8df"], [class*="text-[#c2c9c1"], [class*="text-[#c0c7c1"],
+  [class*="text-[#d8ded6"], [class*="text-[#f5f7f5"]
+) {
+  color: #263229 !important;
+}
+
+/* Legacy outlined controls use dark hover colors designed for the grey theme.
+   In light mode keep those interactions pale so their inherited dark labels
+   remain readable. */
+.app-theme[data-theme="light"] :is(button, a, summary):is(
+  [class*="hover:bg-[#2"], [class*="hover:bg-[#30"], [class*="hover:bg-[#31"],
+  [class*="hover:bg-[#32"], [class*="hover:bg-[#33"], [class*="hover:bg-[#34"],
+  [class*="hover:bg-[#35"], [class*="hover:bg-[#36"], [class*="hover:bg-[#37"],
+  [class*="hover:bg-[#38"], [class*="hover:bg-[#39"]
+):hover {
+  background-color: #e1e9e1 !important;
+  border-color: #9fb1a1 !important;
+}
+
+/* Primary actions intentionally retain their brand-colored backgrounds. */
+.app-theme[data-theme="light"] :is(button, a):is(
+  [class~="bg-[#2f7654]"], [class~="bg-[#2f8059]"], [class~="bg-[#347c52]"],
+  [class~="bg-[#39764d]"], [class~="bg-[#398c5e]"], [class~="bg-[#3d6844]"],
+  [class~="bg-[#3e8756]"], [class~="bg-[#4356c9]"], [class~="bg-[#438a56]"],
+  [class~="bg-[#477052]"], [class~="bg-[#4c60c9]"], [class~="bg-[#4d7947]"],
+  [class~="bg-[#4f8659]"], [class~="bg-[#587e45]"], [class~="bg-[#5b995d]"],
+  [class~="bg-[#5e873f]"], [class~="bg-[#5ea767]"], [class~="bg-[#61b66c]"],
+  [class~="bg-[#647c31]"], [class~="bg-[#64b471]"], [class~="bg-[#67c477]"],
+  [class~="bg-[#71aa78]"]
+) {
+  color: #ffffff !important;
+}
+
+.app-theme[data-theme="light"] :is(button, a):is(
+  [class~="bg-[#2f7654]"], [class~="bg-[#2f8059]"], [class~="bg-[#347c52]"],
+  [class~="bg-[#39764d]"], [class~="bg-[#398c5e]"], [class~="bg-[#3d6844]"],
+  [class~="bg-[#3e8756]"], [class~="bg-[#4356c9]"], [class~="bg-[#438a56]"],
+  [class~="bg-[#477052]"], [class~="bg-[#4c60c9]"], [class~="bg-[#4d7947]"],
+  [class~="bg-[#4f8659]"], [class~="bg-[#587e45]"], [class~="bg-[#5b995d]"],
+  [class~="bg-[#5e873f]"], [class~="bg-[#5ea767]"], [class~="bg-[#61b66c]"],
+  [class~="bg-[#647c31]"], [class~="bg-[#64b471]"], [class~="bg-[#67c477]"],
+  [class~="bg-[#71aa78]"]
+) * {
+  color: inherit !important;
+}
+
+.app-theme[data-theme="light"] :is(.theme-on-dark, .weather-hero, .crop-plan-result) {
+  color: #ffffff !important;
+}
+
+.app-theme[data-theme="light"] :is(.theme-on-dark, .weather-hero, .crop-plan-result) :is(h1, h2, h3, h4) {
+  color: #ffffff !important;
+}
+
+.app-theme[data-theme="light"] :is(.theme-on-dark, .weather-hero, .crop-plan-result) p {
+  color: #dce8de !important;
+}
+
+.app-theme[data-theme="light"] :is(.theme-on-dark, .weather-hero, .crop-plan-result) :is(
+  .text-white, [class*="text-[#d4d8d5"], [class*="text-[#d7ddd8"], [class*="text-[#e2eadf"],
+  [class*="text-[#e4e8df"], [class*="text-[#c2c9c1"], [class*="text-[#c0c7c1"],
+  [class*="text-[#d8ded6"], [class*="text-[#f5f7f5"]
+) {
+  color: #ffffff !important;
+}
+
+.app-theme[data-theme="light"] aside nav button,
+.app-theme[data-theme="light"] aside > button {
+  background-color: transparent !important;
+  color: #455248 !important;
+}
+
+.app-theme[data-theme="light"] aside nav button:hover,
+.app-theme[data-theme="light"] aside > button:hover {
+  background-color: #e2e9e2 !important;
+}
+
+.app-theme[data-theme="light"] aside :is(nav button, button) svg {
+  color: #54725a !important;
+}
+
+.app-theme[data-theme="light"] aside :is(
+  [class~="bg-[#2a382d]"], [class~="bg-[#2a302c]"], [class~="bg-[#2a3042]"],
+  [class~="bg-[#27362d]"], [class~="bg-[#343a25]"], [class~="bg-[#3a3325]"],
+  [class~="bg-[#303824]"], [class~="bg-[#2e3b29]"], [class~="bg-[#3b3525]"],
+  [class~="bg-[#243a36]"], [class~="bg-[#343927]"], [class~="bg-[#2e3c29]"],
+  [class~="bg-[#303632]"]
+) {
+  background-color: #d8e8da !important;
+  color: #18351f !important;
+  box-shadow: inset 3px 0 0 #4f915b;
+}
+
+.app-theme[data-theme="light"] :is(
+  [class*="text-[#9fa8a1"], [class*="text-[#aeb6af"], [class*="text-[#aeb3af"],
+  [class*="text-[#aab2aa"], [class*="text-[#929c94"], [class*="text-[#929a92"],
+  [class*="text-[#909a92"], [class*="text-[#8f978f"], [class*="text-[#879188"],
+  [class*="text-[#838d85"], [class*="text-[#7f8981"], [class*="text-[#bbc3bd"]
+) {
+  color: #58655b !important;
+}
+
+.app-theme[data-theme="light"] :is(.weather-glass, .weather-hour-card, .weather-day-card, .crop-plan-card) {
+  background: #ffffff !important;
+  border-color: #c5d0c6 !important;
+  color: #18211a !important;
+  box-shadow: 0 12px 32px rgba(39, 65, 46, 0.08) !important;
+}
+
+.app-theme[data-theme="light"] .weather-warning-card {
+  background: #fff8e7 !important;
+  border-color: #d8bd77 !important;
+  color: #332813 !important;
+}
+
+.app-theme[data-theme="light"] :is(.weather-atmosphere, .crop-plan-atmosphere, .dashboard-atmosphere)::before {
+  opacity: 0.45;
+}
+
+html[data-theme="contrast"] body,
+.app-theme[data-theme="contrast"],
+.app-theme[data-theme="contrast"] .dark-shell {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+.app-theme[data-theme="contrast"] * {
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+.app-theme[data-theme="contrast"] :is(
+  [class*="bg-[#"], [class*="bg-gradient"], .weather-glass, .weather-hour-card,
+  .weather-day-card, .weather-warning-card, .weather-hero, .crop-plan-card, .crop-plan-result
+) {
+  background: #000000 !important;
+  background-image: none !important;
+}
+
+.app-theme[data-theme="contrast"] [style*="background-image"] {
+  display: none !important;
+}
+
+.app-theme[data-theme="contrast"] :is([class*="border"], section, article, details, input, select, textarea) {
+  border-color: #ffffff !important;
+}
+
+.app-theme[data-theme="contrast"] :is(input, select, textarea) {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-width: 2px !important;
+}
+
+.app-theme[data-theme="contrast"] :is(button, a) {
+  color: #ffeb3b !important;
+  text-decoration-color: currentColor;
+}
+
+.app-theme[data-theme="contrast"] button {
+  background-color: #000000 !important;
+  border: 2px solid #ffffff !important;
+}
+
+.app-theme[data-theme="contrast"] :is(button:hover, button[aria-pressed="true"], a:hover) {
+  background-color: #ffeb3b !important;
+  color: #000000 !important;
+}
+
+.app-theme[data-theme="contrast"] :is(:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible) {
+  outline: 3px solid #00e5ff !important;
+  outline-offset: 3px !important;
+}
+
+.app-theme[data-theme="contrast"] :is([role="alert"], [aria-invalid="true"]) {
+  border: 3px solid #ffeb3b !important;
+}
+
+/* Authentication uses semantic theme hooks because its split-screen artwork is
+   intentionally independent from the dashboard card palette. */
+.auth-page {
+  background: #151916 !important;
+  color: #f5f7f5 !important;
+}
+
+.auth-form-panel {
+  background: #1c211e !important;
+  color: #f5f7f5 !important;
+}
+
+.auth-tabs {
+  background: #121613 !important;
+  border-color: #3f4841 !important;
+}
+
+.auth-form-panel .auth-tab-active {
+  background: #303832 !important;
+  color: #ffffff !important;
+}
+
+.auth-form-panel .auth-tab-inactive,
+.auth-form-panel .auth-copy,
+.auth-form-panel .auth-security {
+  color: #aeb8b0 !important;
+}
+
+.auth-form-panel .auth-title,
+.auth-form-panel label {
+  color: #f7faf7 !important;
+}
+
+.auth-form-panel .auth-input {
+  background: #121613 !important;
+  border-color: #48534b !important;
+  color: #ffffff !important;
+}
+
+.auth-form-panel .auth-input::placeholder {
+  color: #7e8a81 !important;
+}
+
+.auth-form-panel .auth-challenge,
+.auth-form-panel .auth-note {
+  background: #233128 !important;
+  border-color: #4d6753 !important;
+  color: #c8dfcb !important;
+}
+
+.auth-language-toggle {
+  background: rgba(20, 26, 22, 0.88) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  color: #ffffff !important;
+}
+
+.auth-imigongo-strip {
+  background: #1c211e;
+  color: #ffffff;
+}
+
+.auth-imigongo-strip::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: currentColor;
+  opacity: 0.46;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='144' viewBox='0 0 32 144'%3E%3Cg fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M16 0L27 18L16 36L5 18Z M16 36L27 54L16 72L5 54Z M16 72L27 90L16 108L5 90Z M16 108L27 126L16 144L5 126Z'/%3E%3Cpath d='M16 6L23 18L16 30L9 18Z M16 42L23 54L16 66L9 54Z M16 78L23 90L16 102L9 90Z M16 114L23 126L16 138L9 126Z'/%3E%3Cpath d='M2 0L10 18L2 36 M30 0L22 18L30 36 M2 72L10 90L2 108 M30 72L22 90L30 108'/%3E%3C/g%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='144' viewBox='0 0 32 144'%3E%3Cg fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M16 0L27 18L16 36L5 18Z M16 36L27 54L16 72L5 54Z M16 72L27 90L16 108L5 90Z M16 108L27 126L16 144L5 126Z'/%3E%3Cpath d='M16 6L23 18L16 30L9 18Z M16 42L23 54L16 66L9 54Z M16 78L23 90L16 102L9 90Z M16 114L23 126L16 138L9 126Z'/%3E%3Cpath d='M2 0L10 18L2 36 M30 0L22 18L30 36 M2 72L10 90L2 108 M30 72L22 90L30 108'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-position: top center;
+  mask-position: top center;
+  -webkit-mask-repeat: repeat-y;
+  mask-repeat: repeat-y;
+  -webkit-mask-size: 100% 144px;
+  mask-size: 100% 144px;
+}
+
+.app-theme[data-theme="light"] .auth-page {
+  background: #eef3ea !important;
+  color: #172219 !important;
+}
+
+.app-theme[data-theme="light"] .auth-form-panel {
+  background: #f4f7f1 !important;
+  color: #172219 !important;
+}
+
+.app-theme[data-theme="light"] .auth-tabs {
+  background: #e7ede4 !important;
+  border-color: #d3dbd1 !important;
+}
+
+.app-theme[data-theme="light"] .auth-form-panel .auth-tab-active {
+  background: #ffffff !important;
+  color: #17341e !important;
+}
+
+.app-theme[data-theme="light"] .auth-form-panel .auth-tab-inactive {
+  color: #627066 !important;
+}
+
+.app-theme[data-theme="light"] .auth-form-panel .auth-title,
+.app-theme[data-theme="light"] .auth-form-panel label {
+  color: #172219 !important;
+}
+
+.app-theme[data-theme="light"] .auth-form-panel .auth-copy,
+.app-theme[data-theme="light"] .auth-form-panel .auth-security {
+  color: #68746b !important;
+}
+
+.app-theme[data-theme="light"] .auth-form-panel .auth-input {
+  background: #ffffff !important;
+  border-color: #cbd5c9 !important;
+  color: #162219 !important;
+}
+
+.app-theme[data-theme="light"] .auth-form-panel .auth-challenge {
+  background: #e7f0e4 !important;
+  border-color: #bdd0bd !important;
+  color: #2d5734 !important;
+}
+
+.app-theme[data-theme="light"] .auth-form-panel .auth-note {
+  background: #e8efe5 !important;
+  border-color: transparent !important;
+  color: #536357 !important;
+}
+
+.app-theme[data-theme="light"] .auth-language-toggle {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: #c7d1c7 !important;
+  color: #1c2c20 !important;
+}
+
+.app-theme[data-theme="light"] .auth-imigongo-strip {
+  background: #f4f7f1;
+  color: #111713;
+}
+
+.app-theme[data-theme="dark"] .auth-page,
+.app-theme[data-theme="dark"] .auth-form-panel {
+  background: #080b09 !important;
+}
+
+.app-theme[data-theme="dark"] .auth-imigongo-strip {
+  background: #080b09;
+  color: #ffffff;
+}
+
+.app-theme[data-theme="contrast"] .auth-imigongo-strip {
+  display: block !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-theme,
+  .app-theme * {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,5 @@
+# Optional Plant Lens inference/training runtime. Install only on a machine with
+# enough disk space for PyTorch, then place a trusted trained export in models/.
+-r requirements.txt
+fastprogress==1.0.3
+fastai==2.8.12

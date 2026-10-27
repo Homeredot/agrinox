@@ -1,0 +1,268 @@
+{
+  "model_version": "fastai-tomato-plantvillage-v4",
+  "crop": "tomato",
+  "framework": "fastai",
+  "architecture": "resnet18 transfer learning",
+  "resumed_from": "C:\\Users\\arhen\\Downloads\\agri_ai\\backend\\models\\plant_lens_tomato_v3.pkl",
+  "backbone_frozen_during_this_run": false,
+  "image_size": 160,
+  "classes": [
+    "Tomato_Bacterial_spot",
+    "Tomato_Early_blight",
+    "Tomato_Late_blight",
+    "Tomato_Leaf_Mold",
+    "Tomato_Septoria_leaf_spot",
+    "Tomato_Spider_mites_Two_spotted_spider_mite",
+    "Tomato__Target_Spot",
+    "Tomato__Tomato_YellowLeaf__Curl_Virus",
+    "Tomato__Tomato_mosaic_virus",
+    "Tomato_healthy",
+    "Unsupported_or_wrong_crop"
+  ],
+  "dataset": {
+    "name": "PlantVillage / Plant Disease Recognition (Kaggle emmarex/plantdisease)",
+    "source": "https://www.kaggle.com/datasets/emmarex/plantdisease/",
+    "root": "C:\\Users\\arhen\\Downloads\\agri_ai\\PlantVillage",
+    "unique_class_counts": {
+      "Tomato_Bacterial_spot": 2127,
+      "Tomato_Early_blight": 1000,
+      "Tomato_Late_blight": 1901,
+      "Tomato_Leaf_Mold": 952,
+      "Tomato_Septoria_leaf_spot": 1771,
+      "Tomato_Spider_mites_Two_spotted_spider_mite": 1676,
+      "Tomato__Target_Spot": 1404,
+      "Tomato__Tomato_mosaic_virus": 373,
+      "Tomato__Tomato_YellowLeaf__Curl_Virus": 3208,
+      "Tomato_healthy": 1585,
+      "Unsupported_or_wrong_crop": 3500
+    },
+    "duplicates_excluded_within_selected_tree": 14,
+    "nested_dataset_trees_excluded": true,
+    "unsupported_sampling": "Deterministic sample of direct other-crop folders with seed 42."
+  },
+  "training_images": 15598,
+  "validation_images": 3899,
+  "validation_design": "File-level random 80/20 held-out split with seed 42; validation images are not used for gradient updates.",
+  "validation_loss": 0.3563026785850525,
+  "validation_accuracy": 0.8845857977867126,
+  "validation_error_rate": 0.11541420221328735,
+  "per_class_validation": [
+    {
+      "class": "Tomato_Bacterial_spot",
+      "precision": 0.9331476323119777,
+      "recall": 0.7863849765258216,
+      "validation_images": 426
+    },
+    {
+      "class": "Tomato_Early_blight",
+      "precision": 0.8926174496644296,
+      "recall": 0.6584158415841584,
+      "validation_images": 202
+    },
+    {
+      "class": "Tomato_Late_blight",
+      "precision": 0.9815950920245399,
+      "recall": 0.8311688311688312,
+      "validation_images": 385
+    },
+    {
+      "class": "Tomato_Leaf_Mold",
+      "precision": 0.9526627218934911,
+      "recall": 0.8846153846153846,
+      "validation_images": 182
+    },
+    {
+      "class": "Tomato_Septoria_leaf_spot",
+      "precision": 0.6773584905660377,
+      "recall": 0.967654986522911,
+      "validation_images": 371
+    },
+    {
+      "class": "Tomato_Spider_mites_Two_spotted_spider_mite",
+      "precision": 0.8689839572192514,
+      "recall": 0.9154929577464789,
+      "validation_images": 355
+    },
+    {
+      "class": "Tomato__Target_Spot",
+      "precision": 0.8173076923076923,
+      "recall": 0.6882591093117408,
+      "validation_images": 247
+    },
+    {
+      "class": "Tomato__Tomato_YellowLeaf__Curl_Virus",
+      "precision": 1.0,
+      "recall": 0.9057187017001546,
+      "validation_images": 647
+    },
+    {
+      "class": "Tomato__Tomato_mosaic_virus",
+      "precision": 0.6601941747572816,
+      "recall": 0.9855072463768116,
+      "validation_images": 69
+    },
+    {
+      "class": "Tomato_healthy",
+      "precision": 0.8016085790884718,
+      "recall": 0.9900662251655629,
+      "validation_images": 302
+    },
+    {
+      "class": "Unsupported_or_wrong_crop",
+      "precision": 0.9598337950138505,
+      "recall": 0.9719495091164095,
+      "validation_images": 713
+    }
+  ],
+  "confusion_matrix": [
+    [
+      335,
+      1,
+      0,
+      0,
+      71,
+      3,
+      14,
+      0,
+      0,
+      2,
+      0
+    ],
+    [
+      2,
+      133,
+      3,
+      2,
+      33,
+      1,
+      16,
+      0,
+      1,
+      6,
+      5
+    ],
+    [
+      0,
+      10,
+      320,
+      3,
+      23,
+      2,
+      2,
+      0,
+      0,
+      10,
+      15
+    ],
+    [
+      0,
+      0,
+      0,
+      161,
+      12,
+      5,
+      0,
+      0,
+      2,
+      1,
+      1
+    ],
+    [
+      0,
+      1,
+      0,
+      1,
+      359,
+      0,
+      0,
+      0,
+      4,
+      3,
+      3
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1,
+      325,
+      5,
+      0,
+      11,
+      11,
+      2
+    ],
+    [
+      1,
+      1,
+      0,
+      0,
+      15,
+      17,
+      170,
+      0,
+      3,
+      38,
+      2
+    ],
+    [
+      21,
+      0,
+      0,
+      1,
+      7,
+      20,
+      1,
+      586,
+      11,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      68,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      299,
+      1
+    ],
+    [
+      0,
+      3,
+      3,
+      1,
+      8,
+      1,
+      0,
+      0,
+      1,
+      3,
+      693
+    ]
+  ],
+  "trained_at": "2026-10-23T16:55:12.782000+00:00",
+  "limitations": [
+    "PlantVillage-style images may not represent Rwanda field backgrounds, lighting, cultivars or all tomato disorders.",
+    "The unsupported class improves rejection of included other-crop images but cannot represent every possible unrelated photograph.",
+    "Validate on an independent Rwanda field dataset before clinical or automatic treatment use."
+  ]
+}

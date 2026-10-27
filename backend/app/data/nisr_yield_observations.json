@@ -1,0 +1,110 @@
+{
+  "dataset_version": "nisr-sas-curated-2026-10-22",
+  "unit": "metric_tonnes_per_hectare",
+  "sources": {
+    "sas_2024_a": {
+      "title": "NISR Seasonal Agricultural Survey, Season A 2024",
+      "url": "https://www.statistics.gov.rw/sites/default/files/documents/2024-10/SAS_2024%20Season%20A%20Final%20Report%20%282%29_compressed.pdf"
+    },
+    "sas_2024_b": {
+      "title": "NISR Seasonal Agricultural Survey, Season B 2024",
+      "url": "https://www.statistics.gov.rw/sites/default/files/documents/2025-02/SAS%202024B.pdf"
+    },
+    "sas_2024_annual": {
+      "title": "NISR Seasonal Agricultural Survey 2024 Annual Report",
+      "url": "https://www.statistics.gov.rw/sites/default/files/documents/2025-02/SAS%202024%20Annual.pdf"
+    },
+    "sas_2025_a": {
+      "title": "NISR Seasonal Agricultural Survey, Season A 2025",
+      "url": "https://www.statistics.gov.rw/sites/default/files/documents/2025-05/SAS%202025A_Final%20%20report.pdf"
+    },
+    "sas_2025_b": {
+      "title": "NISR Seasonal Agricultural Survey, Season B 2025",
+      "url": "https://gis.statistics.gov.rw/data-sources/surveys/Seasonal-Agricultural-Survey/Seasonal-Agricultural-Survey/seasonal-agricultural-survey-season-b-2025"
+    },
+    "sas_2025_annual": {
+      "title": "NISR Seasonal Agricultural Survey 2025 Annual Report",
+      "url": "https://www.statistics.gov.rw/sites/default/files/documents/2025-12/SAS%202025%20Final%20report.pdf"
+    },
+    "sas_2026_a": {
+      "title": "NISR Seasonal Agricultural Survey, Season A 2026",
+      "url": "https://www.statistics.gov.rw/sites/default/files/documents/2026-04/SAS%202026%20Season%20A%20_Final%20Report.pdf"
+    }
+  },
+  "observations": [
+    {"year": 2023, "season": "A", "crop": "Maize", "geography": "Rwanda", "yield_t_ha": 1.7, "source": "sas_2024_a"},
+    {"year": 2024, "season": "A", "crop": "Maize", "geography": "Rwanda", "yield_t_ha": 2.0, "source": "sas_2024_a"},
+    {"year": 2025, "season": "A", "crop": "Maize", "geography": "Rwanda", "yield_t_ha": 2.0, "source": "sas_2025_a"},
+    {"year": 2026, "season": "A", "crop": "Maize", "geography": "Rwanda", "yield_t_ha": 1.994, "source": "sas_2026_a"},
+    {"year": 2026, "season": "A", "crop": "Maize", "geography": "Musanze", "yield_t_ha": 1.929, "source": "sas_2026_a"},
+
+    {"year": 2023, "season": "A", "crop": "Paddy rice", "geography": "Rwanda", "yield_t_ha": 4.0, "source": "sas_2024_a"},
+    {"year": 2024, "season": "A", "crop": "Paddy rice", "geography": "Rwanda", "yield_t_ha": 4.1, "source": "sas_2024_a"},
+    {"year": 2025, "season": "A", "crop": "Paddy rice", "geography": "Rwanda", "yield_t_ha": 4.1, "source": "sas_2025_a"},
+    {"year": 2026, "season": "A", "crop": "Paddy rice", "geography": "Rwanda", "yield_t_ha": 4.131, "source": "sas_2026_a"},
+
+    {"year": 2023, "season": "A", "crop": "Cassava", "geography": "Rwanda", "yield_t_ha": 13.5, "source": "sas_2024_a"},
+    {"year": 2024, "season": "A", "crop": "Cassava", "geography": "Rwanda", "yield_t_ha": 13.3, "source": "sas_2024_a"},
+    {"year": 2025, "season": "A", "crop": "Cassava", "geography": "Rwanda", "yield_t_ha": 13.5, "source": "sas_2025_a"},
+    {"year": 2026, "season": "A", "crop": "Cassava", "geography": "Rwanda", "yield_t_ha": 13.671, "source": "sas_2026_a"},
+    {"year": 2026, "season": "A", "crop": "Cassava", "geography": "Musanze", "yield_t_ha": 5.458, "source": "sas_2026_a"},
+
+    {"year": 2023, "season": "A", "crop": "Sweet potato", "geography": "Rwanda", "yield_t_ha": 7.36, "source": "sas_2024_a"},
+    {"year": 2024, "season": "A", "crop": "Sweet potato", "geography": "Rwanda", "yield_t_ha": 7.8, "source": "sas_2024_a"},
+    {"year": 2025, "season": "A", "crop": "Sweet potato", "geography": "Rwanda", "yield_t_ha": 8.4, "source": "sas_2025_a"},
+    {"year": 2026, "season": "A", "crop": "Sweet potato", "geography": "Rwanda", "yield_t_ha": 8.823, "source": "sas_2026_a"},
+    {"year": 2026, "season": "A", "crop": "Sweet potato", "geography": "Musanze", "yield_t_ha": 9.23, "source": "sas_2026_a"},
+
+    {"year": 2023, "season": "A", "crop": "Irish potato", "geography": "Rwanda", "yield_t_ha": 8.2, "source": "sas_2024_a"},
+    {"year": 2024, "season": "A", "crop": "Irish potato", "geography": "Rwanda", "yield_t_ha": 8.5, "source": "sas_2024_a"},
+    {"year": 2025, "season": "A", "crop": "Irish potato", "geography": "Rwanda", "yield_t_ha": 8.7, "source": "sas_2025_a"},
+    {"year": 2026, "season": "A", "crop": "Irish potato", "geography": "Rwanda", "yield_t_ha": 8.906, "source": "sas_2026_a"},
+    {"year": 2026, "season": "A", "crop": "Irish potato", "geography": "Musanze", "yield_t_ha": 12.556, "source": "sas_2026_a"},
+
+    {"year": 2023, "season": "A", "crop": "Banana", "geography": "Rwanda", "yield_t_ha": 11.4, "source": "sas_2024_a"},
+    {"year": 2024, "season": "A", "crop": "Banana", "geography": "Rwanda", "yield_t_ha": 11.8, "source": "sas_2024_a"},
+    {"year": 2025, "season": "A", "crop": "Banana", "geography": "Rwanda", "yield_t_ha": 11.6, "source": "sas_2025_a"},
+    {"year": 2026, "season": "A", "crop": "Banana", "geography": "Rwanda", "yield_t_ha": 11.884, "source": "sas_2026_a"},
+    {"year": 2026, "season": "A", "crop": "Banana", "geography": "Musanze", "yield_t_ha": 10.812, "source": "sas_2026_a"},
+
+    {"year": 2023, "season": "A", "crop": "Beans", "geography": "Rwanda", "yield_t_ha": 0.63, "source": "sas_2024_a"},
+    {"year": 2024, "season": "A", "crop": "Beans", "geography": "Rwanda", "yield_t_ha": 0.709, "source": "sas_2024_a"},
+    {"year": 2025, "season": "A", "crop": "Beans", "geography": "Rwanda", "yield_t_ha": 0.705, "source": "sas_2025_a"},
+    {"year": 2026, "season": "A", "crop": "Beans", "geography": "Rwanda", "yield_t_ha": 0.7, "source": "sas_2026_a"},
+    {"year": 2026, "season": "A", "crop": "Beans", "geography": "Musanze", "yield_t_ha": 1.023, "source": "sas_2026_a"},
+
+    {"year": 2023, "season": "B", "crop": "Maize", "geography": "Rwanda", "yield_t_ha": 1.3, "source": "sas_2024_b"},
+    {"year": 2024, "season": "B", "crop": "Maize", "geography": "Rwanda", "yield_t_ha": 1.3, "source": "sas_2024_b"},
+    {"year": 2025, "season": "B", "crop": "Maize", "geography": "Rwanda", "yield_t_ha": 1.3, "source": "sas_2025_b"},
+    {"year": 2023, "season": "B", "crop": "Paddy rice", "geography": "Rwanda", "yield_t_ha": 4.2, "source": "sas_2024_b"},
+    {"year": 2024, "season": "B", "crop": "Paddy rice", "geography": "Rwanda", "yield_t_ha": 4.1, "source": "sas_2024_b"},
+    {"year": 2025, "season": "B", "crop": "Paddy rice", "geography": "Rwanda", "yield_t_ha": 4.1, "source": "sas_2025_b"},
+    {"year": 2023, "season": "B", "crop": "Cassava", "geography": "Rwanda", "yield_t_ha": 14.8, "source": "sas_2024_b"},
+    {"year": 2024, "season": "B", "crop": "Cassava", "geography": "Rwanda", "yield_t_ha": 14.3, "source": "sas_2024_b"},
+    {"year": 2025, "season": "B", "crop": "Cassava", "geography": "Rwanda", "yield_t_ha": 14.4, "source": "sas_2025_b"},
+    {"year": 2023, "season": "B", "crop": "Sweet potato", "geography": "Rwanda", "yield_t_ha": 7.5, "source": "sas_2024_b"},
+    {"year": 2024, "season": "B", "crop": "Sweet potato", "geography": "Rwanda", "yield_t_ha": 7.7, "source": "sas_2024_b"},
+    {"year": 2025, "season": "B", "crop": "Sweet potato", "geography": "Rwanda", "yield_t_ha": 8.1, "source": "sas_2025_b"},
+    {"year": 2023, "season": "B", "crop": "Irish potato", "geography": "Rwanda", "yield_t_ha": 6.7, "source": "sas_2024_b"},
+    {"year": 2024, "season": "B", "crop": "Irish potato", "geography": "Rwanda", "yield_t_ha": 6.8, "source": "sas_2024_b"},
+    {"year": 2025, "season": "B", "crop": "Irish potato", "geography": "Rwanda", "yield_t_ha": 6.8, "source": "sas_2025_b"},
+    {"year": 2023, "season": "B", "crop": "Banana", "geography": "Rwanda", "yield_t_ha": 12.3, "source": "sas_2024_b"},
+    {"year": 2024, "season": "B", "crop": "Banana", "geography": "Rwanda", "yield_t_ha": 12.4, "source": "sas_2024_b"},
+    {"year": 2025, "season": "B", "crop": "Banana", "geography": "Rwanda", "yield_t_ha": 12.4, "source": "sas_2025_b"},
+    {"year": 2023, "season": "B", "crop": "Beans", "geography": "Rwanda", "yield_t_ha": 0.8, "source": "sas_2024_b"},
+    {"year": 2024, "season": "B", "crop": "Beans", "geography": "Rwanda", "yield_t_ha": 0.7, "source": "sas_2024_b"},
+    {"year": 2025, "season": "B", "crop": "Beans", "geography": "Rwanda", "yield_t_ha": 0.719, "source": "sas_2025_annual"},
+
+    {"year": 2023, "season": "C", "crop": "Irish potato", "geography": "Rwanda", "yield_t_ha": 7.9, "source": "sas_2024_annual"},
+    {"year": 2024, "season": "C", "crop": "Irish potato", "geography": "Rwanda", "yield_t_ha": 9.1, "source": "sas_2024_annual"},
+    {"year": 2025, "season": "C", "crop": "Irish potato", "geography": "Rwanda", "yield_t_ha": 9.134, "source": "sas_2025_annual"},
+    {"year": 2025, "season": "C", "crop": "Irish potato", "geography": "Musanze", "yield_t_ha": 9.449, "source": "sas_2025_annual"},
+    {"year": 2023, "season": "C", "crop": "Sweet potato", "geography": "Rwanda", "yield_t_ha": 5.8, "source": "sas_2024_annual"},
+    {"year": 2024, "season": "C", "crop": "Sweet potato", "geography": "Rwanda", "yield_t_ha": 8.6, "source": "sas_2024_annual"},
+    {"year": 2025, "season": "C", "crop": "Sweet potato", "geography": "Rwanda", "yield_t_ha": 9.097, "source": "sas_2025_annual"},
+    {"year": 2025, "season": "C", "crop": "Sweet potato", "geography": "Musanze", "yield_t_ha": 9.117, "source": "sas_2025_annual"},
+    {"year": 2024, "season": "C", "crop": "Beans", "geography": "Rwanda", "yield_t_ha": 1.054, "source": "sas_2024_annual"},
+    {"year": 2025, "season": "C", "crop": "Beans", "geography": "Rwanda", "yield_t_ha": 1.013, "source": "sas_2025_annual"},
+    {"year": 2025, "season": "C", "crop": "Beans", "geography": "Musanze", "yield_t_ha": 1.074, "source": "sas_2025_annual"}
+  ]
+}
