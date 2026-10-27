@@ -832,6 +832,24 @@ def test_casual_greeting_uses_conversation_response(client, auth, monkeypatch):
     assert response.json()["citations"] == []
 
 
+def test_knowledge_assistant_uses_verified_district_crop_evidence(client, auth, monkeypatch):
+    monkeypatch.setattr("app.services.knowledge.settings.gemini_api_key", None)
+    response = client.post(
+        "/api/v1/knowledge/ask",
+        headers=auth,
+        json={"question": "What can I plant on my farm in Musnze?", "language": "en"},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["response_mode"] == "district_evidence"
+    assert "Musanze" in payload["answer"]
+    assert "Irish potato" in payload["answer"]
+    assert "Climbing bean" in payload["answer"]
+    assert "not proof that every crop suits your field" in payload["answer"]
+    assert len(payload["citations"]) == 2
+    assert all("statistics.gov.rw" in citation["source_url"] for citation in payload["citations"])
+
+
 def test_misspelled_greeting_is_understood_without_verified_record(client, auth, monkeypatch):
     monkeypatch.setattr("app.services.knowledge.settings.gemini_api_key", None)
     response = client.post(

@@ -66,6 +66,16 @@ function categoryName(category: string, language: Language) {
   return CATEGORY_NAMES[category]?.[language] ?? category.replaceAll("_", " ");
 }
 
+function answerEvidenceLabel(message: Message, language: Language) {
+  if (message.response_mode === "district_evidence") {
+    return language === "rw" ? "Imibare y'akarere ya NISR" : "Verified NISR district evidence";
+  }
+  if (message.citations?.length) {
+    return language === "rw" ? "Igisubizo gifite amasoko" : "Verified answer · sources included";
+  }
+  return language === "rw" ? "Umufasha wa AI" : "AI Assistant";
+}
+
 export default function KnowledgeBase({ token, language }: { token: string; language: Language }) {
   const [feature, setFeature] = useState<"library" | "district">("library");
   const [answerLanguage, setAnswerLanguage] = useState<Language>(language);
@@ -294,7 +304,7 @@ export default function KnowledgeBase({ token, language }: { token: string; lang
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#6d5530] text-[#ffdfa0]"><Bot size={21} /></span>
-                  <div><h2 className="font-semibold">Agrinox Knowledge Assistant</h2><p className="text-xs text-[#90968f]">Verified library + trusted web sources · citations included</p></div>
+                  <div><h2 className="font-semibold">Agrinox Knowledge Assistant</h2><p className="text-xs text-[#90968f]">Verified library + NISR district evidence + trusted sources</p></div>
                 </div>
                 <button onClick={newConversation} className="rounded-full border border-[#51544c] px-3 py-1.5 text-xs hover:bg-[#30322e]">New chat</button>
               </div>
@@ -310,7 +320,7 @@ export default function KnowledgeBase({ token, language }: { token: string; lang
             <div className="flex-1 space-y-4 overflow-y-auto p-4">
               {!messages.length && (
                 <div className="grid h-full place-items-center text-center">
-                  <div className="max-w-sm"><MessageCircleQuestion className="mx-auto text-[#cda75c]" size={38} /><h3 className="mt-4 text-xl font-semibold">Ask from verified records</h3><p className="mt-2 text-sm leading-6 text-[#969c96]">Try “What does Tubura mean?” or “Ni ryari igihembwe A gitangira?”</p></div>
+                  <div className="max-w-sm"><MessageCircleQuestion className="mx-auto text-[#cda75c]" size={38} /><h3 className="mt-4 text-xl font-semibold">Ask from verified records</h3><p className="mt-2 text-sm leading-6 text-[#969c96]">Try “What can I plant in Musanze?”, “What does Tubura mean?” or “Ni ryari igihembwe A gitangira?”</p></div>
                 </div>
               )}
               {messages.map((message, index) => (
@@ -320,7 +330,7 @@ export default function KnowledgeBase({ token, language }: { token: string; lang
                     <p className="whitespace-pre-wrap text-sm leading-6">{message.content}</p>
                     {message.role === "assistant" && (
                       <div className="mt-3 border-t border-[#41423a] pt-2">
-                        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#8fb986]"><ShieldCheck size={13} /> {message.citations?.length ? "Verified AI answer · sources included" : "AI Assistant"}</p>
+                        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#8fb986]"><ShieldCheck size={13} /> {answerEvidenceLabel(message, answerLanguage)}</p>
                         {!!message.citations?.length && <div className="mt-2 space-y-1.5">{message.citations.map((citation) => <a key={`${citation.rank}-${citation.article_id}`} href={citation.source_url} target="_blank" rel="noreferrer" className="flex items-start gap-2 text-xs text-[#d2b879] hover:underline"><span>[{citation.rank}]</span><span>{citation.article_title}</span><ExternalLink className="mt-0.5 shrink-0" size={12} /></a>)}</div>}
                       </div>
                     )}
@@ -336,7 +346,7 @@ export default function KnowledgeBase({ token, language }: { token: string; lang
                 <textarea value={question} onChange={(event) => setQuestion(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} rows={2} placeholder={words.ask} className="max-h-32 min-h-12 flex-1 resize-none bg-transparent px-2 py-2 text-sm outline-none" />
                 <button disabled={asking || !question.trim()} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#71803d] text-white disabled:opacity-40" aria-label="Send question"><ArrowUp size={19} /></button>
               </div>
-              <p className="mt-2 text-center text-[10px] text-[#777d77]">No verified record → no invented answer. Confirm treatments with RAB or an agronomist.</p>
+              <p className="mt-2 text-center text-[10px] text-[#777d77]">Uses verified records first and asks for missing details instead of guessing.</p>
             </form>
           </div>
         </section>

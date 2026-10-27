@@ -1,6 +1,9 @@
+import json
 import re
+from functools import lru_cache
 from difflib import SequenceMatcher, get_close_matches
 from datetime import datetime, timezone
+from pathlib import Path
 
 import httpx
 from sqlalchemy import select
@@ -8,6 +11,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.core.config import settings
 from app.db.models import (
+    Farm,
     KnowledgeArticle,
     KnowledgeConversation,
     KnowledgeMessage,
@@ -18,6 +22,8 @@ from app.services.knowledge_seed import KNOWLEDGE_SEED
 
 
 VERIFIED_STATUSES = {"source_verified", "agronomist_reviewed"}
+DATA_ROOT = Path(__file__).resolve().parents[1] / "data"
+DISTRICT_INTELLIGENCE_PATH = DATA_ROOT / "nisr_district_intelligence.json"
 TRUSTED_AGRICULTURE_DOMAINS = [
     "rab.gov.rw",
     "minagri.gov.rw",
@@ -90,6 +96,175 @@ COMMON_QUERY_CORRECTIONS = {
     "potatoe": "potato",
     "tuburra": "tubura",
 }
+
+CROP_CHOICE_PHRASES = (
+    "what can i plant", "what should i plant", "which crop", "which crops",
+    "crops to plant", "crop to plant", "suitable crop", "suitable crops",
+    "what can i grow", "what should i grow",
+    "nahinga iki", "natera iki", "ni iki nahinga", "ni iki natera",
+    "ibihingwa nahinga", "ibihingwa natera", "igihingwa nahinga",
+)
+
+CROP_NAMES_RW = {
+    "climbing bean": "ibishyimbo bizamuka",
+    "bush bean": "ibishyimbo bigufi",
+    "maize": "ibigori",
+    "irish potato": "ibirayi",
+    "sweet potato": "ibijumba",
+    "sorghum": "amasaka",
+    "wheat": "ingano",
+    "vegetables": "imboga",
+    "cooking banana": "ibitoki byo guteka",
+    "dessert banana": "ibitoki byo kurya",
+    "banana for beer": "ibitoki by'inzoga",
+    "cassava": "imyumbati",
+    "pea": "amashaza",
+    "soybean": "soya",
+    "fruits": "imbuto",
+}
+
+
+@lru_cache(maxsize=1)
+def _district_intelligence() -> dict:
+    try:
+        return json.loads(DISTRICT_INTELLIGENCE_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"records": [], "sources": {}}
+
+
+def _crop_choice_intent(question: str) -> bool:
+    normalized = re.sub(r"[^a-zA-ZÀ-ÿ0-9]+", " ", question.casefold()).strip()
+    return any(phrase in normalized for phrase in CROP_CHOICE_PHRASES)
+
+
+def _question_season(question: str) -> str | None:
+    lowered = question.casefold()
+    match = re.search(r"(?:season|igihembwe)\s*([abc])\b", lowered)
+    return match.group(1).upper() if match else None
+
+
+def _question_district(question: str) -> str | None:
+    records = _district_intelligence().get("records") or []
+    districts = sorted({str(record["district"]) for record in records if record.get("district")})
+    lowered = question.casefold()
+    for district in districts:
+        if re.search(rf"\b{re.escape(district.casefold())}\b", lowered):
+            return district
+
+    # Accept a close district spelling only when it is an individual word. This
+    # fixes phone-keyboard errors such as "Musnze" without turning a general
+    # farming term into a place name.
+    words = re.findall(r"[a-zA-ZÀ-ÿ]+", lowered)
+    lookup = {district.casefold(): district for district in districts}
+    for word in words:
+        if len(word) < 5:
+            continue
+        match = get_close_matches(word, lookup, n=1, cutoff=0.82)
+        if match and abs(len(match[0]) - len(word)) <= 2:
+            return lookup[match[0]]
+    return None
+
+
+def _registered_farm_district(db: Session, owner_id: int) -> str | None:
+    districts = sorted({
+        district for district in db.scalars(
+            select(Farm.district).where(Farm.owner_id == owner_id)
+        ).all() if district
+    })
+    return districts[0] if len(districts) == 1 else None
+
+
+def _display_crop(crop: str, language: str) -> str:
+    clean = crop.strip()
+    return CROP_NAMES_RW.get(clean.casefold(), clean) if language == "rw" else clean[0].upper() + clean[1:]
+
+
+def _district_crop_guidance(
+    db: Session,
+    owner_id: int,
+    question: str,
+    language: str,
+) -> tuple[str, list[dict]] | None:
+    """Answer crop-choice questions from verified district cultivation records.
+
+    Cultivated area shows what was actually grown locally. It is useful context,
+    but it is deliberately not presented as proof that a crop suits one field.
+    """
+    if not _crop_choice_intent(question):
+        return None
+
+    district = _question_district(question)
+    if not district and any(phrase in question.casefold() for phrase in ("my farm", "my field", "umurima wanjye")):
+        district = _registered_farm_district(db, owner_id)
+    if not district:
+        answer = (
+            "Ni akahe karere umurima wawe urimo? Hitamo n'igihembwe A, B cyangwa C kugira ngo nkoreshe imibare ya NISR ibereye aho hantu."
+            if language == "rw" else
+            "Which district is your farm in? Include Season A, B or C so I can use the relevant verified NISR records."
+        )
+        return answer, []
+
+    dataset = _district_intelligence()
+    records = [
+        record for record in dataset.get("records", [])
+        if str(record.get("district") or "").casefold() == district.casefold()
+        and record.get("indicator") == "cultivated_area"
+        and record.get("crop") not in (None, "Total", "Other crops")
+        and float(record.get("value") or 0) > 0
+    ]
+    if not records:
+        return None
+
+    latest_year = max(int(record["year"]) for record in records)
+    season = _question_season(question)
+    available_seasons = sorted({record["season"] for record in records if int(record["year"]) == latest_year})
+    seasons = [season] if season in available_seasons else available_seasons[:2]
+    selected_sources = []
+    lines = []
+    for selected_season in seasons:
+        season_records = sorted(
+            (
+                record for record in records
+                if int(record["year"]) == latest_year and record["season"] == selected_season
+            ),
+            key=lambda record: (-float(record["value"]), str(record["crop"])),
+        )[:5]
+        if not season_records:
+            continue
+        source_key = str(season_records[0].get("source_season") or selected_season)
+        if source_key not in selected_sources:
+            selected_sources.append(source_key)
+        rank = selected_sources.index(source_key) + 1
+        crops = ", ".join(_display_crop(str(record["crop"]), language) for record in season_records)
+        label = f"Igihembwe {selected_season}" if language == "rw" else f"Season {selected_season}"
+        lines.append(f"• {label}: {crops}. [{rank}]")
+
+    if not lines:
+        return None
+
+    if language == "rw":
+        answer = (
+            f"Imibare ya NISR yo mu {latest_year} igaragaza ibihingwa byari bifite ubuso bunini bwahinzwe mu karere ka {district}:\n"
+            + "\n".join(lines)
+            + "\nIbi bigaragaza ibyahinzwe muri ako karere, ariko si icyemezo cy'igihingwa kibereye umurima wawe. Mbwira igihembwe, uko ubutaka butwara amazi n'uko buhingwa kugira ngo tugabanye amahitamo."
+        )
+    else:
+        answer = (
+            f"NISR {latest_year} records show these crops had the largest recorded cultivated areas in {district}:\n"
+            + "\n".join(lines)
+            + "\nThis is evidence of local cultivation, not proof that every crop suits your field. Tell me the season, soil drainage and irrigation availability to narrow the choice."
+        )
+
+    citations = []
+    for source_key in selected_sources:
+        source = (dataset.get("sources") or {}).get(source_key) or {}
+        citations.append({
+            "article_id": None,
+            "article_title": str(source.get("title") or f"NISR Seasonal Agricultural Survey, Season {source_key}"),
+            "source_url": str(source.get("url") or source.get("report_url") or ""),
+            "score": 1.0,
+        })
+    return answer, citations
 
 
 def seed_knowledge(db: Session) -> None:
@@ -551,9 +726,13 @@ def answer_question(db: Session, owner_id: int, question: str, language: str, co
     user_message = KnowledgeMessage(conversation_id=conversation.id, role="user", content=question.strip())
     db.add(user_message)
     db.flush()
-    retrieved = retrieve_articles(db, question)
-    generated = _gemini_answer(question, language, retrieved, history)
-    if generated:
+    district_guidance = _district_crop_guidance(db, owner_id, question, language)
+    retrieved = [] if district_guidance else retrieve_articles(db, question)
+    generated = None if district_guidance else _gemini_answer(question, language, retrieved, history)
+    if district_guidance:
+        answer, citations = district_guidance
+        mode, model = "district_evidence", None
+    elif generated:
         answer, web_citations, model, mode = generated
         citations = [{
             "article_id": article.id,
