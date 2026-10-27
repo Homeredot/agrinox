@@ -1331,7 +1331,7 @@ def install_device_firmware(
     user: User = Depends(current_user),
 ):
     try:
-        discovered = flash_firmware(payload.port)
+        discovered = flash_firmware(payload.port, manual_boot=payload.manual_boot)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except RuntimeError as exc:

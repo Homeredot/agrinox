@@ -922,7 +922,7 @@ def test_gemini_internal_thought_text_is_not_shown_to_farmer():
 
 def test_dashboard_firmware_install_auto_names_and_registers_device(client, auth, monkeypatch):
     configured = {}
-    monkeypatch.setattr("app.api.flash_firmware", lambda port: {
+    monkeypatch.setattr("app.api.flash_firmware", lambda port, manual_boot=False: {
         "protocol": "agrinox-1",
         "device_uid": "esp32-aabbcc112233",
         "board": "ESP32 NPK monitor",
@@ -1003,6 +1003,21 @@ def test_firmware_upload_explains_manual_boot_mode(monkeypatch):
             stderr="Failed to connect to ESP32: No serial data received.",
         ),
     )
-    with pytest.raises(RuntimeError, match="Hold the BOOT button"):
+    with pytest.raises(RuntimeError, match="Manual BOOT mode"):
         _upload_merged_firmware("COM6")
+
+
+def test_firmware_manual_boot_does_not_reset_board_before_upload(monkeypatch):
+    from app.services.devices import _upload_merged_firmware
+
+    captured = {}
+
+    def successful_upload(arguments, **kwargs):
+        captured["arguments"] = arguments
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+    monkeypatch.setattr("app.services.devices.subprocess.run", successful_upload)
+    _upload_merged_firmware("COM6", manual_boot=True)
+    before_index = captured["arguments"].index("--before")
+    assert captured["arguments"][before_index + 1] == "no-reset"
 

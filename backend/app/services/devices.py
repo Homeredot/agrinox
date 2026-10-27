@@ -66,7 +66,7 @@ def _ensure_firmware_binary() -> None:
     )
 
 
-def _upload_merged_firmware(port: str) -> None:
+def _upload_merged_firmware(port: str, manual_boot: bool = False) -> None:
     try:
         completed = subprocess.run(
             [
@@ -80,7 +80,7 @@ def _upload_merged_firmware(port: str) -> None:
                 "--baud",
                 "460800",
                 "--before",
-                "default-reset",
+                "no-reset" if manual_boot else "default-reset",
                 "--after",
                 "hard-reset",
                 "write-flash",
@@ -116,10 +116,15 @@ def _upload_merged_firmware(port: str) -> None:
                 "PlatformIO, PuTTY, and other serial tools, then scan again."
             )
         if "failed to connect to esp32" in lowered or "no serial data received" in lowered:
+            if manual_boot:
+                raise RuntimeError(
+                    f"{port} still received no bootloader data in manual mode. Disconnect every wire except "
+                    "USB, hold BOOT, tap EN/RESET, keep BOOT held for two seconds, then release it before "
+                    "selecting Install firmware. Try another USB cable or USB port if this continues."
+                )
             raise RuntimeError(
                 f"{port} opened, but the ESP32 bootloader did not answer. Disconnect the NPK/RS485 wiring "
-                "so only USB remains connected. Hold the BOOT button, start Install firmware, then release "
-                "BOOT after installation begins. If needed, keep holding BOOT and briefly press EN/RESET."
+                "so only USB remains connected, then retry with Manual BOOT mode enabled."
             )
         raise RuntimeError(output[-1200:])
 
@@ -133,13 +138,13 @@ def _validate_esp32_port(port: str) -> None:
         raise ValueError(f"{port} is not recognized as an ESP32 USB connection")
 
 
-def flash_firmware(port: str) -> dict:
+def flash_firmware(port: str, manual_boot: bool = False) -> dict:
     if not _firmware_lock.acquire(blocking=False):
         raise RuntimeError("Another firmware installation is already running")
     try:
         _validate_esp32_port(port)
         _ensure_firmware_binary()
-        _upload_merged_firmware(port)
+        _upload_merged_firmware(port, manual_boot=manual_boot)
         time.sleep(2.5)
         return exchange(port, "AGRINOX_DISCOVER")
     finally:

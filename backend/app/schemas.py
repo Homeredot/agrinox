@@ -238,6 +238,7 @@ class FirmwareInstallRequest(BaseModel):
     port: str = Field(min_length=3, max_length=120)
     wifi_ssid: str = Field(min_length=1, max_length=32)
     wifi_password: SecretStr = Field(min_length=8, max_length=63)
+    manual_boot: bool = False
 
 
 class DeviceUpdate(BaseModel):
