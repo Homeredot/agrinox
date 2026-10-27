@@ -390,6 +390,11 @@ export default function DeviceManagement({
     }
   }
 
+  function openFirmwareInstaller(port: Port) {
+    setError("");
+    setInstallingPort(port);
+  }
+
   async function saveEdit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!editing) return;
@@ -622,7 +627,7 @@ export default function DeviceManagement({
                     </span>
                     <div className="flex flex-wrap gap-2">
                       {devices.some((item) => item.device_uid === port.device?.device_uid) && (
-                        <button onClick={() => setInstallingPort(port)} className="inline-flex items-center gap-1.5 rounded-full border border-[#52705b] px-3.5 py-2 text-sm font-semibold text-[#a9d7b2]">
+                        <button onClick={() => openFirmwareInstaller(port)} className="inline-flex items-center gap-1.5 rounded-full border border-[#52705b] px-3.5 py-2 text-sm font-semibold text-[#a9d7b2]">
                           <Download size={14} /> Update firmware
                         </button>
                       )}
@@ -639,7 +644,7 @@ export default function DeviceManagement({
                   <div className="mt-3 rounded-lg bg-[#342f25] p-3 text-xs text-[#c4af82]">
                     <p className="font-semibold">{port.error || "No compatible device responded on this port."}</p>
                     {port.action && <p className="mt-1.5 leading-5 text-[#aa9c7c]">{port.action}</p>}
-                    {port.likely_esp32 && <div className="mt-3 flex flex-wrap gap-2">{(port.error_code === "no_response" || port.error_code === "incompatible") && <button type="button" onClick={() => setInstallingPort(port)} className="inline-flex items-center gap-1.5 rounded-full bg-[#3f8056] px-3 py-1.5 font-semibold text-white"><Download size={13} />Install firmware</button>}<button type="button" onClick={() => void scan()} disabled={scanning} className="inline-flex items-center gap-1.5 rounded-full border border-[#6d624a] px-3 py-1.5 font-semibold text-[#dbc38e] disabled:opacity-50"><RefreshCw size={13} className={scanning ? "animate-spin" : ""} />Scan again</button></div>}
+                    {port.likely_esp32 && <div className="mt-3 flex flex-wrap gap-2">{(port.error_code === "no_response" || port.error_code === "incompatible") && <button type="button" onClick={() => openFirmwareInstaller(port)} className="inline-flex items-center gap-1.5 rounded-full bg-[#3f8056] px-3 py-1.5 font-semibold text-white"><Download size={13} />Install firmware</button>}<button type="button" onClick={() => void scan()} disabled={scanning} className="inline-flex items-center gap-1.5 rounded-full border border-[#6d624a] px-3 py-1.5 font-semibold text-[#dbc38e] disabled:opacity-50"><RefreshCw size={13} className={scanning ? "animate-spin" : ""} />Scan again</button></div>}
                   </div>
                 )}
               </article>
@@ -746,7 +751,7 @@ export default function DeviceManagement({
         </div>
       </section>
 
-      {installingPort && <FirmwareInstallModal port={installingPort} busy={busy} onClose={() => setInstallingPort(null)} onSubmit={installFirmware} />}
+      {installingPort && <FirmwareInstallModal port={installingPort} busy={busy} error={error} onClose={() => setInstallingPort(null)} onSubmit={installFirmware} />}
       {registering?.device && (
         <DeviceFormModal
           title={devices.some((item) => item.device_uid === registering.device?.device_uid) ? "Assign device to field" : "Register device"}
@@ -782,15 +787,17 @@ export default function DeviceManagement({
 function FirmwareInstallModal({
   port,
   busy,
+  error,
   onClose,
   onSubmit,
 }: {
   port: Port;
   busy: boolean;
+  error: string;
   onClose: () => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
-  return <div className="fixed inset-0 z-[1300] grid place-items-end overflow-y-auto bg-black/80 p-0 backdrop-blur-sm sm:place-items-center sm:p-4"><form onSubmit={onSubmit} className="w-full max-w-lg rounded-t-3xl border border-[#454b46] bg-[#202521] p-5 shadow-2xl sm:rounded-3xl sm:p-7"><div className="flex items-start justify-between gap-4"><div className="flex gap-3"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#315f42] text-[#b8e6bf]"><Download size={22} /></span><div><p className="text-xs font-bold uppercase tracking-[.16em] text-[#83c18c]">ESP32 setup · {port.port}</p><h2 className="mt-1 text-2xl font-semibold">Install Agrinox firmware</h2><p className="mt-1 text-sm leading-5 text-[#a7afa8]">The device name, identity and security key are created automatically.</p></div></div><button type="button" onClick={onClose} disabled={busy} className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#303631] disabled:opacity-40" aria-label="Close firmware setup"><X size={18} /></button></div><div className="mt-6 rounded-2xl border border-[#3f5043] bg-[#27312a] p-4"><div className="flex items-center gap-2 text-sm font-semibold"><Wifi size={17} className="text-[#8bcb93]" />Connect the device to Wi-Fi</div><p className="mt-1 text-xs leading-5 text-[#929b93]">Enter the same Wi-Fi network used by this Agrinox computer. The password is sent directly to the ESP32 and is not returned by the API.</p><label className="mt-4 block text-sm font-semibold">Wi-Fi name<input name="wifi_ssid" required maxLength={32} autoComplete="off" className="mt-2 w-full rounded-xl border border-[#4a534b] bg-[#1e231f] p-3.5" placeholder="Example: Home WiFi" /></label><label className="mt-4 block text-sm font-semibold">Wi-Fi password<input name="wifi_password" type="password" required minLength={8} maxLength={63} autoComplete="new-password" className="mt-2 w-full rounded-xl border border-[#4a534b] bg-[#1e231f] p-3.5" placeholder="At least 8 characters" /></label></div>{busy && <div role="status" className="mt-4 rounded-xl border border-[#5f573a] bg-[#342f22] p-4 text-sm text-[#dccb95]"><p className="flex items-center gap-2 font-semibold"><LoaderCircle size={17} className="animate-spin" />Installing and verifying firmware…</p><p className="mt-1 text-xs leading-5 text-[#b6aa84]">Keep the USB cable connected. The ESP32 may restart several times.</p></div>}<div className="mt-6 flex justify-end gap-3"><button type="button" onClick={onClose} disabled={busy} className="h-11 rounded-xl border border-[#4c554d] px-4 font-semibold disabled:opacity-40">Cancel</button><button disabled={busy} className="flex h-11 items-center gap-2 rounded-xl bg-[#78b763] px-5 font-bold text-[#142013] disabled:opacity-50">{busy ? <LoaderCircle size={17} className="animate-spin" /> : <Download size={17} />}{busy ? "Installing…" : "Install firmware"}</button></div></form></div>;
+  return <div className="fixed inset-0 z-[1300] grid place-items-end overflow-y-auto bg-black/80 p-0 backdrop-blur-sm sm:place-items-center sm:p-4"><form onSubmit={onSubmit} className="max-h-[100dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-[#454b46] bg-[#202521] p-5 shadow-2xl sm:max-h-[calc(100dvh-2rem)] sm:rounded-3xl sm:p-7"><div className="flex items-start justify-between gap-4"><div className="flex gap-3"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#315f42] text-[#b8e6bf]"><Download size={22} /></span><div><p className="text-xs font-bold uppercase tracking-[.16em] text-[#83c18c]">ESP32 setup · {port.port}</p><h2 className="mt-1 text-2xl font-semibold">Install Agrinox firmware</h2><p className="mt-1 text-sm leading-5 text-[#a7afa8]">The device name, identity and security key are created automatically.</p></div></div><button type="button" onClick={onClose} disabled={busy} className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#303631] disabled:opacity-40" aria-label="Close firmware setup"><X size={18} /></button></div><div className="mt-5 rounded-2xl border border-[#665a35] bg-[#332f22] p-4 text-sm"><p className="font-semibold text-[#ead79c]">Put the ESP32 in upload mode</p><ol className="mt-2 list-decimal space-y-1.5 pl-5 text-xs leading-5 text-[#c9bc91]"><li>Disconnect the NPK sensor and RS485 module; leave only the USB cable.</li><li>Press and keep holding the <strong>BOOT</strong> button.</li><li>Click <strong>Install firmware</strong> below.</li><li>Release BOOT when “Installing…” appears. If it still cannot connect, hold BOOT and briefly press <strong>EN/RESET</strong>.</li></ol></div><div className="mt-4 rounded-2xl border border-[#3f5043] bg-[#27312a] p-4"><div className="flex items-center gap-2 text-sm font-semibold"><Wifi size={17} className="text-[#8bcb93]" />Connect the device to Wi-Fi</div><p className="mt-1 text-xs leading-5 text-[#929b93]">Enter the same Wi-Fi network used by this Agrinox computer. The password is sent directly to the ESP32 and is not returned by the API.</p><label className="mt-4 block text-sm font-semibold">Wi-Fi name<input name="wifi_ssid" required maxLength={32} autoComplete="off" className="mt-2 w-full rounded-xl border border-[#4a534b] bg-[#1e231f] p-3.5" placeholder="Example: Home WiFi" /></label><label className="mt-4 block text-sm font-semibold">Wi-Fi password<input name="wifi_password" type="password" required minLength={8} maxLength={63} autoComplete="new-password" className="mt-2 w-full rounded-xl border border-[#4a534b] bg-[#1e231f] p-3.5" placeholder="At least 8 characters" /></label></div>{error && <div role="alert" className="mt-4 rounded-xl border border-[#7a4545] bg-[#3a2525] p-4 text-sm leading-6 text-[#f0b1b1]">{error}</div>}{busy && <div role="status" className="mt-4 rounded-xl border border-[#5f573a] bg-[#342f22] p-4 text-sm text-[#dccb95]"><p className="flex items-center gap-2 font-semibold"><LoaderCircle size={17} className="animate-spin" />Installing and verifying firmware…</p><p className="mt-1 text-xs leading-5 text-[#b6aa84]">Keep the USB cable connected. The ESP32 may restart several times.</p></div>}<div className="mt-6 flex justify-end gap-3"><button type="button" onClick={onClose} disabled={busy} className="h-11 rounded-xl border border-[#4c554d] px-4 font-semibold disabled:opacity-40">Cancel</button><button disabled={busy} className="flex h-11 items-center gap-2 rounded-xl bg-[#78b763] px-5 font-bold text-[#142013] disabled:opacity-50">{busy ? <LoaderCircle size={17} className="animate-spin" /> : <Download size={17} />}{busy ? "Installing…" : "Install firmware"}</button></div></form></div>;
 }
 
 function DeviceFormModal({

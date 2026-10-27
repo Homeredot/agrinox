@@ -115,6 +115,12 @@ def _upload_merged_firmware(port: str) -> None:
                 f"{port} is open in another program. Close Arduino Serial Monitor, Serial Plotter, "
                 "PlatformIO, PuTTY, and other serial tools, then scan again."
             )
+        if "failed to connect to esp32" in lowered or "no serial data received" in lowered:
+            raise RuntimeError(
+                f"{port} opened, but the ESP32 bootloader did not answer. Disconnect the NPK/RS485 wiring "
+                "so only USB remains connected. Hold the BOOT button, start Install firmware, then release "
+                "BOOT after installation begins. If needed, keep holding BOOT and briefly press EN/RESET."
+            )
         raise RuntimeError(output[-1200:])
 
 

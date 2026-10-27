@@ -1,4 +1,7 @@
 from datetime import datetime, timedelta, timezone
+from types import SimpleNamespace
+
+import pytest
 
 from app.db.models import Device, IrrigationCommand
 from app.db.session import SessionLocal
@@ -987,4 +990,19 @@ def test_missing_windows_serial_port_has_actionable_device_error():
     assert code == "port_missing"
     assert "working serial port" in message
     assert "CP210x" in action
+
+
+def test_firmware_upload_explains_manual_boot_mode(monkeypatch):
+    from app.services.devices import _upload_merged_firmware
+
+    monkeypatch.setattr(
+        "app.services.devices.subprocess.run",
+        lambda *args, **kwargs: SimpleNamespace(
+            returncode=1,
+            stdout="",
+            stderr="Failed to connect to ESP32: No serial data received.",
+        ),
+    )
+    with pytest.raises(RuntimeError, match="Hold the BOOT button"):
+        _upload_merged_firmware("COM6")
 
