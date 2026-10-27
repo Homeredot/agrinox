@@ -976,3 +976,15 @@ def test_dashboard_firmware_install_auto_names_and_registers_device(client, auth
     assert assigned.json()["field_id"] == field_id
     assert len(client.get("/api/v1/devices", headers=auth).json()) == 1
 
+
+def test_missing_windows_serial_port_has_actionable_device_error():
+    from app.services.devices import _friendly_port_error
+
+    code, message, action = _friendly_port_error(
+        "COM6",
+        FileNotFoundError(2, "The system cannot find the file specified"),
+    )
+    assert code == "port_missing"
+    assert "working serial port" in message
+    assert "CP210x" in action
+

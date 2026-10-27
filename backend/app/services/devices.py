@@ -98,6 +98,23 @@ def _upload_merged_firmware(port: str) -> None:
         raise RuntimeError("Firmware upload timed out. Reconnect the ESP32 and try again.") from exc
     if completed.returncode != 0:
         output = (completed.stderr or completed.stdout or "Firmware upload failed").strip()
+        lowered = output.casefold()
+        if "could not open" in lowered and any(
+            term in lowered
+            for term in ("file not found", "cannot find the file", "doesn't exist", "does not exist")
+        ):
+            raise RuntimeError(
+                f"{port} is not available in Windows. Reconnect the ESP32 with a data-capable USB cable, "
+                "wait for the port to appear, and scan again. If Device Manager shows Code 10, update or "
+                "reinstall the Silicon Labs CP210x USB-to-UART driver."
+            )
+        if "could not open" in lowered and any(
+            term in lowered for term in ("access is denied", "permissionerror", "permission denied", "busy")
+        ):
+            raise RuntimeError(
+                f"{port} is open in another program. Close Arduino Serial Monitor, Serial Plotter, "
+                "PlatformIO, PuTTY, and other serial tools, then scan again."
+            )
         raise RuntimeError(output[-1200:])
 
 
@@ -181,6 +198,15 @@ def _friendly_port_error(port: str, error: Exception) -> tuple[str, str, str]:
             "port_unavailable",
             f"Windows detected {port}, but the USB connection is not responding.",
             "Unplug the device, reconnect it with a data-capable USB cable, wait a few seconds, then scan again.",
+        )
+    if any(
+        term in lowered
+        for term in ("file not found", "cannot find the file", "no such file", "doesn't exist", "does not exist")
+    ):
+        return (
+            "port_missing",
+            f"Windows lists {port}, but it did not create a working serial port.",
+            "Reconnect the ESP32 and scan again. If Device Manager shows Code 10, update or reinstall the Silicon Labs CP210x driver.",
         )
     if isinstance(error, (serial.SerialException, PermissionError, OSError)) and any(
         term in lowered for term in ("access is denied", "permissionerror", "permission denied", "resource busy")

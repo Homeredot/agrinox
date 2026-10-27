@@ -47,7 +47,7 @@ type Port = {
     sensors?: DiscoveredSensor[];
   } | null;
   error?: string | null;
-  error_code?: "port_unavailable" | "port_busy" | "no_response" | "incompatible" | "probe_failed" | null;
+  error_code?: "port_unavailable" | "port_missing" | "port_busy" | "no_response" | "incompatible" | "probe_failed" | null;
   action?: string | null;
 };
 type Sensor = DiscoveredSensor & {
@@ -639,7 +639,7 @@ export default function DeviceManagement({
                   <div className="mt-3 rounded-lg bg-[#342f25] p-3 text-xs text-[#c4af82]">
                     <p className="font-semibold">{port.error || "No compatible device responded on this port."}</p>
                     {port.action && <p className="mt-1.5 leading-5 text-[#aa9c7c]">{port.action}</p>}
-                    {port.likely_esp32 && <div className="mt-3 flex flex-wrap gap-2"><button type="button" onClick={() => setInstallingPort(port)} className="inline-flex items-center gap-1.5 rounded-full bg-[#3f8056] px-3 py-1.5 font-semibold text-white"><Download size={13} />Install firmware</button><button type="button" onClick={() => void scan()} disabled={scanning} className="inline-flex items-center gap-1.5 rounded-full border border-[#6d624a] px-3 py-1.5 font-semibold text-[#dbc38e] disabled:opacity-50"><RefreshCw size={13} className={scanning ? "animate-spin" : ""} />Scan again</button></div>}
+                    {port.likely_esp32 && <div className="mt-3 flex flex-wrap gap-2">{(port.error_code === "no_response" || port.error_code === "incompatible") && <button type="button" onClick={() => setInstallingPort(port)} className="inline-flex items-center gap-1.5 rounded-full bg-[#3f8056] px-3 py-1.5 font-semibold text-white"><Download size={13} />Install firmware</button>}<button type="button" onClick={() => void scan()} disabled={scanning} className="inline-flex items-center gap-1.5 rounded-full border border-[#6d624a] px-3 py-1.5 font-semibold text-[#dbc38e] disabled:opacity-50"><RefreshCw size={13} className={scanning ? "animate-spin" : ""} />Scan again</button></div>}
                   </div>
                 )}
               </article>
