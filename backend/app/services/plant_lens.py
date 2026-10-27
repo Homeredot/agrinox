@@ -57,7 +57,7 @@ TOMATO_CLASS_DETAILS = {
 }
 CLASS_DETAILS = {"irish-potato": POTATO_CLASS_DETAILS, "tomato": TOMATO_CLASS_DETAILS}
 MODEL_SOURCE = {
-    "title": "PlantVillage plant disease image dataset (Kaggle)",
+    "title": "disease_dataset plant disease image dataset (Kaggle)",
     "url": "https://www.kaggle.com/datasets/emmarex/plantdisease/",
 }
 TRAINING_WORKFLOW_SOURCE = {
@@ -76,7 +76,7 @@ MIN_ACCEPTED_CONFIDENCE = 0.70
 MIN_ACCEPTED_MARGIN = 0.15
 CROP_THRESHOLDS = {"irish-potato": (0.70, 0.15), "tomato": (0.90, 0.30)}
 TOMATO_SPOT_LABELS = {"bacterial spot", "early blight", "septoria leaf spot", "target spot"}
-# PlantVillage scores are not field accuracy. These deliberately conservative
+# disease_dataset scores are not field accuracy. These deliberately conservative
 # gates favour "uncertain" over a confident-looking, potentially wrong result.
 TOMATO_CLASS_THRESHOLDS = {
     "late blight": (0.85, 0.25),
@@ -222,7 +222,7 @@ def _predict_with_fastai(image_path: Path, crop_id: str = "irish-potato") -> lis
 def _tomato_screening_decision(ranked: list[dict]) -> dict:
     """Return a conservative tomato screening decision.
 
-    Four PlantVillage leaf-spot classes overlap heavily. We never expose their
+    Four disease_dataset leaf-spot classes overlap heavily. We never expose their
     exact model label as a diagnosis; we only report the broader visual pattern
     when their combined probability clearly dominates all other categories.
     """

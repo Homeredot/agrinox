@@ -12,9 +12,9 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-3.8-flash"
     gemini_fallback_model: str = "gemini-3.6-flash"
     plant_lens_model_path: str = "models/plant_lens_potato_v2.pkl"
-    plant_lens_model_version: str = "fastai-potato-plantvillage-v2"
+    plant_lens_model_version: str = "fastai-potato-disease-dataset-v2"
     plant_lens_tomato_model_path: str = "models/plant_lens_tomato_v4.pkl"
-    plant_lens_tomato_model_version: str = "fastai-tomato-plantvillage-v4"
+    plant_lens_tomato_model_version: str = "fastai-tomato-disease-dataset-v4"
     plant_lens_max_upload_mb: int = 10
     planet_client_id: str | None = None
     planet_client_secret: str | None = None

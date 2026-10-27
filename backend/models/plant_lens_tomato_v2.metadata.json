@@ -1,5 +1,5 @@
 {
-  "model_version": "fastai-tomato-plantvillage-v2",
+  "model_version": "fastai-tomato-disease-dataset-v2",
   "crop": "tomato",
   "framework": "fastai",
   "architecture": "resnet18 transfer learning",
@@ -19,9 +19,9 @@
     "Unsupported_or_wrong_crop"
   ],
   "dataset": {
-    "name": "PlantVillage / Plant Disease Recognition (Kaggle emmarex/plantdisease)",
+    "name": "disease_dataset / Plant Disease Recognition (Kaggle emmarex/plantdisease)",
     "source": "https://www.kaggle.com/datasets/emmarex/plantdisease/",
-    "root": "C:\\Users\\arhen\\Downloads\\agri_ai\\PlantVillage",
+    "root": "C:\\Users\\arhen\\Downloads\\agri_ai\\disease_dataset",
     "unique_class_counts": {
       "Tomato_Bacterial_spot": 400,
       "Tomato_Early_blight": 400,
@@ -192,7 +192,7 @@
   ],
   "trained_at": "2026-10-23T13:49:52.964413+00:00",
   "limitations": [
-    "PlantVillage-style images may not represent Rwanda field backgrounds, lighting, cultivars or all tomato disorders.",
+    "disease_dataset-style images may not represent Rwanda field backgrounds, lighting, cultivars or all tomato disorders.",
     "The unsupported class improves rejection of included other-crop images but cannot represent every possible unrelated photograph.",
     "Validate on an independent Rwanda field dataset before clinical or automatic treatment use."
   ]

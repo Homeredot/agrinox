@@ -16,10 +16,10 @@ frontend/out/
 frontend/tsconfig.tsbuildinfo
 .pytest_cache/
 firmware/build/
-PlantVillage/
+disease_dataset/
 archive.zip
 *.zip
-!data/PlantVillage.zip.part*
+!data/disease_dataset.zip.part*
 .DS_Store
 Thumbs.db
 

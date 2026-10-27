@@ -44,7 +44,7 @@ UNSUPPORTED_LABEL = "Unsupported_or_wrong_crop"
 def collect_images(dataset: Path, crop: str = "potato", unsupported_limit: int = 1200, per_class_limit: int = 0) -> tuple[list[dict], dict[str, int], int]:
     """Collect selected crop classes plus a sample of other-crop negatives.
 
-    Some PlantVillage downloads contain a second complete ``PlantVillage`` tree
+    Some disease_dataset downloads contain a second complete ``disease_dataset`` tree
     inside the extraction directory. Restricting discovery to direct class
     folders prevents a byte-identical image from landing in both train and
     validation sets and producing misleading validation metrics.
@@ -83,7 +83,7 @@ def collect_images(dataset: Path, crop: str = "potato", unsupported_limit: int =
     unsupported_candidates = [
         path
         for class_dir in dataset.iterdir()
-        if class_dir.is_dir() and class_dir.name not in {*supported_class_dirs, "PlantVillage"}
+        if class_dir.is_dir() and class_dir.name not in {*supported_class_dirs, "disease_dataset"}
         for path in class_dir.iterdir()
         if path.is_file() and path.suffix.casefold() in IMAGE_SUFFIXES
     ]
@@ -148,7 +148,7 @@ def main():
     frame = pd.DataFrame.from_records(records)
 
     # Split the explicit, deduplicated file list. Using the path's parent as the
-    # label preserves the labels supplied by the Kaggle PlantVillage dataset.
+    # label preserves the labels supplied by the Kaggle disease_dataset dataset.
     from fastai.data.transforms import RandomSplitter
 
     splitter = RandomSplitter(valid_pct=0.2, seed=42)
@@ -218,7 +218,7 @@ def main():
         "image_size": args.image_size,
         "classes": [str(item) for item in dls.vocab],
         "dataset": {
-            "name": "PlantVillage / Plant Disease Recognition (Kaggle emmarex/plantdisease)",
+            "name": "disease_dataset / Plant Disease Recognition (Kaggle emmarex/plantdisease)",
             "source": "https://www.kaggle.com/datasets/emmarex/plantdisease/",
             "root": str(args.dataset.resolve()),
             "unique_class_counts": class_counts,
@@ -236,7 +236,7 @@ def main():
         "confusion_matrix": confusion.tolist(),
         "trained_at": datetime.now(timezone.utc).isoformat(),
         "limitations": [
-            f"PlantVillage-style images may not represent Rwanda field backgrounds, lighting, cultivars or all {args.crop} disorders.",
+            f"disease_dataset-style images may not represent Rwanda field backgrounds, lighting, cultivars or all {args.crop} disorders.",
             "The unsupported class improves rejection of included other-crop images but cannot represent every possible unrelated photograph.",
             "Validate on an independent Rwanda field dataset before clinical or automatic treatment use.",
         ],

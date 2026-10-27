@@ -1,1 +1,1 @@
-data/PlantVillage.zip.part* filter=lfs diff=lfs merge=lfs -text
+data/disease_dataset.zip.part* filter=lfs diff=lfs merge=lfs -text

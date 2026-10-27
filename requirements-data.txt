@@ -1,2 +1,2 @@
-# Optional dependency for downloading the original PlantVillage dataset.
+# Optional dependency for downloading the plant disease training dataset.
 kaggle>=1.7,<2
