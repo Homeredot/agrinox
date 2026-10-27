@@ -29,6 +29,19 @@ uploads, logs, build output and credentials are excluded from Git. This keeps
 the repository suitable for review while preserving reproducible training and
 setup instructions.
 
+The complete PlantVillage archive is stored as numbered parts under
+`data/PlantVillage.zip.part*` using Git LFS. Reviewers can restore and extract
+the archive with `python scripts/restore_plantvillage_archive.py`, or download
+the source dataset automatically from Kaggle:
+
+```powershell
+.\.venv\Scripts\python -m pip install -r requirements-data.txt
+.\.venv\Scripts\python scripts\download_plantvillage.py
+```
+
+The downloader uses the official Kaggle dataset `emmarex/plantdisease` and may
+request Kaggle authentication or acceptance of the dataset terms.
+
 ## Run locally
 
 Requirements: Python 3.11+ and Node.js 20+.

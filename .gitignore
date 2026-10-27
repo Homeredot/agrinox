@@ -19,6 +19,7 @@ firmware/build/
 PlantVillage/
 archive.zip
 *.zip
+!data/PlantVillage.zip.part*
 .DS_Store
 Thumbs.db
 
