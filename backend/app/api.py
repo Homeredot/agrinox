@@ -1544,51 +1544,6 @@ def update_device(device_id: int, payload: DeviceUpdate, db: Session = Depends(g
     return device_view(device)
 
 
-@router.post("/devices/{device_id}/read")
-def read_device(device_id: int, db: Session = Depends(get_db), user: User = Depends(current_user)):
-    device = db.scalar(select(Device).where(Device.id == device_id, Device.owner_id == user.id).options(selectinload(Device.sensors), selectinload(Device.field).selectinload(FarmField.farm)))
-    if not device:
-        raise HTTPException(status_code=404, detail="Device not found")
-    try:
-        payload = exchange(device.port, "AGRINOX_READ", device.baud_rate)
-        readings = payload.get("readings", {})
-        now = datetime.now(timezone.utc)
-        npk_values = {
-            key: float(readings[key])
-            for key in ("nitrogen", "phosphorus", "potassium")
-            if key in readings
-        }
-        all_zero_npk = (
-            set(npk_values) == {"nitrogen", "phosphorus", "potassium"}
-            and all(value == 0.0 for value in npk_values.values())
-        )
-        for sensor in device.sensors:
-            if sensor.sensor_key not in readings:
-                continue
-            value = float(readings[sensor.sensor_key])
-            sensor.last_read_at = now
-            valid = not (all_zero_npk and sensor.sensor_key in npk_values)
-            if valid:
-                sensor.latest_value = value
-            db.add(SensorReading(sensor_id=sensor.id, value=value, recorded_at=now, valid=valid))
-        device.status = "connected"
-        device.last_seen_at = now
-        db.commit()
-    except Exception as exc:
-        device.status = "offline"
-        db.commit()
-        send_notification(
-            db, user, category="device_alerts", event_key=f"device-offline:{device.id}:{datetime.now(timezone.utc).strftime('%Y-%m-%dT%H')}",
-            subject_en=f"Device connection failed: {device.name}",
-            body_en=f"Agrinox could not read {device.name}; it is marked offline. Check power, USB or network connectivity before relying on its sensor readings.",
-            subject_rw=f"Igikoresho nticyashoboye guhuzwa: {device.name}",
-            body_rw=f"Agrinox ntiyashoboye gusoma {device.name}; cyashyizwe kuri offline. Genzura umuriro, USB cyangwa murandasi mbere yo kwishingikiriza ku bipimo byacyo.",
-        )
-        raise HTTPException(status_code=503, detail=f"Could not read device: {exc}") from exc
-    db.refresh(device)
-    return device_view(device)
-
-
 @router.delete("/devices/{device_id}", status_code=204)
 def delete_device(device_id: int, db: Session = Depends(get_db), user: User = Depends(current_user)):
     device = db.scalar(select(Device).where(Device.id == device_id, Device.owner_id == user.id))

@@ -4,6 +4,11 @@ This sketch reads only soil nitrogen, phosphorus and potassium from a Modbus
 RS485 probe. It supports both Agrinox USB discovery and authenticated Wi-Fi
 upload to `POST /api/v1/iot/readings`.
 
+USB is used only to install firmware, save Wi-Fi/API configuration and run a
+local diagnostic. Normal heartbeats and sensor measurements are sent over
+Wi-Fi to the configured Agrinox host; the dashboard never polls the probe over
+the USB cable.
+
 ## Wiring
 
 | RS485 board | ESP32 |

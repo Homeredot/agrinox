@@ -92,12 +92,12 @@ function DeviceDetail({
   device,
   reading,
   onBack,
-  onRead,
+  onRefresh,
 }: {
   device: Device;
   reading: boolean;
   onBack: () => void;
-  onRead: () => void;
+  onRefresh: () => void;
 }) {
   return (
     <div>
@@ -128,7 +128,7 @@ function DeviceDetail({
           </p>
         </div>
         <button
-          onClick={onRead}
+          onClick={onRefresh}
           disabled={reading}
           className="flex h-11 items-center gap-2 rounded-full bg-[#2f8059] px-5 font-semibold hover:bg-[#399466] disabled:opacity-50"
         >
@@ -137,14 +137,14 @@ function DeviceDetail({
           ) : (
             <RefreshCw size={18} />
           )}
-          {reading ? "Reading…" : "Read sensors now"}
+          {reading ? "Refreshing…" : "Refresh readings"}
         </button>
       </div>
 
       {!device.is_online && (
         <div className="mt-5 rounded-2xl border border-[#6d4a3d] bg-[#392922] p-4 text-sm text-[#e3b59d]">
           <p className="font-semibold">This device is not contacting Agrinox.</p>
-          <p className="mt-1 leading-6 text-[#c6a99a]">Wi-Fi can be connected while the Agrinox server is still unreachable. Check that this computer and the device use the same network, then scan the USB port and choose <strong>Update firmware</strong> to install automatic heartbeat support.</p>
+          <p className="mt-1 leading-6 text-[#c6a99a]">Check the device power, Wi-Fi connection and whether it can reach the Agrinox server. USB is used only for setup and firmware installation, not for live sensor delivery.</p>
         </div>
       )}
 
@@ -162,7 +162,7 @@ function DeviceDetail({
       <section className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
           ["Device type", "Field monitoring device"],
-          ["USB port", device.port],
+          ["Setup USB port", device.port],
           ["Firmware", device.firmware_version || "Not reported"],
           ["Assignment", device.field_name || "Unassigned"],
           ["Connection", device.is_online ? "Online" : "Offline"],
@@ -189,6 +189,9 @@ function DeviceDetail({
             </p>
           </div>
         </div>
+        <p className="mt-3 rounded-xl border border-[#385044] bg-[#253129] p-3 text-xs leading-5 text-[#9fc2a7]">
+          Sensor route: ESP32 → Wi-Fi → Agrinox API → dashboard. Refreshing this page only reloads readings already received by the backend.
+        </p>
         {device.sensors.length === 0 ? (
           <div className="py-16 text-center text-[#8f9490]">
             <CircleGauge className="mx-auto mb-3" size={36} />
@@ -484,11 +487,7 @@ export default function DeviceManagement({
     setReading(true);
     setError("");
     try {
-      const updated = await api<Device>(
-        `/devices/${detail.id}/read`,
-        { method: "POST" },
-        token,
-      );
+      const updated = await api<Device>(`/devices/${detail.id}`, {}, token);
       setDevices((current) =>
         current.map((item) => (item.id === updated.id ? updated : item)),
       );
@@ -496,7 +495,7 @@ export default function DeviceManagement({
       setError(
         requestError instanceof Error
           ? requestError.message
-          : "Sensor read failed",
+          : "Could not refresh readings",
       );
       await loadDevices();
     } finally {
@@ -510,7 +509,7 @@ export default function DeviceManagement({
         device={detail}
         reading={reading}
         onBack={() => setDetailId(null)}
-        onRead={() => void readNow()}
+        onRefresh={() => void readNow()}
       />
     );
 
@@ -701,8 +700,7 @@ export default function DeviceManagement({
                     <div className="min-w-0">
                       <strong className="block truncate">{device.name}</strong>
                       <p className="truncate text-sm text-[#8f958f]">
-                        Field monitoring device · {device.port} · {device.sensors.length}{" "}
-                        sensors
+                        Wi-Fi field monitor · {device.sensors.length} sensors
                       </p>
                     </div>
                   </div>

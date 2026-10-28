@@ -587,7 +587,7 @@ def test_weather_dashboard_uses_farm_coordinates_and_sqlite_cache(client, auth, 
     assert calls[0][1]["forecast_days"] == 7
 
 
-def test_esp32_device_is_assigned_to_field_and_persists_real_reading(client, auth, monkeypatch):
+def test_esp32_device_is_assigned_to_field_and_persists_real_wifi_reading(client, auth):
     farm_id = client.post("/api/v1/farms", headers=auth, json=farm_payload()).json()["id"]
     field_id = client.post(
         f"/api/v1/farms/{farm_id}/fields",
@@ -610,11 +610,18 @@ def test_esp32_device_is_assigned_to_field_and_persists_real_reading(client, aut
     assert created.json()["status"] == "online"
     assert created.json()["is_online"] is True
 
-    monkeypatch.setattr("app.api.exchange", lambda *args: {"protocol": "agrinox-1", "readings": {"soil": 47.5}})
-    reading = client.post(f"/api/v1/devices/{created.json()['id']}/read", headers=auth)
+    credentials = client.post(f"/api/v1/iot/devices/{created.json()['id']}/credentials", headers=auth).json()
+    reading = client.post(
+        "/api/v1/iot/readings",
+        headers={"X-Device-ID": credentials["device_uid"], "X-Device-Key": credentials["device_key"]},
+        json={"firmware_version": "wifi-test-1", "readings": [{"key": "soil", "value": 47.5, "unit": "%"}]},
+    )
     assert reading.status_code == 200
-    assert reading.json()["sensors"][0]["latest_value"] == 47.5
-    assert reading.json()["field_name"] == "Sensor plot"
+    assert reading.json()["accepted"] == 1
+    refreshed = client.get(f"/api/v1/devices/{created.json()['id']}", headers=auth)
+    assert refreshed.json()["sensors"][0]["latest_value"] == 47.5
+    assert refreshed.json()["field_name"] == "Sensor plot"
+    assert client.post(f"/api/v1/devices/{created.json()['id']}/read", headers=auth).status_code == 404
 
     edited = client.patch(
         f"/api/v1/devices/{created.json()['id']}",
