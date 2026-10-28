@@ -38,7 +38,7 @@ constexpr unsigned long UPLOAD_INTERVAL_MS = 60000;
 constexpr unsigned long HEARTBEAT_INTERVAL_MS = 30000;
 constexpr unsigned long WIFI_RETRY_INTERVAL_MS = 10000;
 constexpr size_t BUFFER_SIZE = 10;
-constexpr char FIRMWARE_VERSION[] = "agrinox-npk-1.1.0";
+constexpr char FIRMWARE_VERSION[] = "agrinox-npk-1.2.0";
 
 HardwareSerial npkSerial(2);
 ModbusMaster npk;
@@ -87,6 +87,12 @@ bool plausibleNpk(float value) {
   return isfinite(value) && value >= 0.0f && value <= 10000.0f;
 }
 
+bool allZeroNpk(const NpkReading &reading) {
+  return reading.nitrogen == 0.0f &&
+         reading.phosphorus == 0.0f &&
+         reading.potassium == 0.0f;
+}
+
 bool readNpk(NpkReading &reading) {
   npk.clearResponseBuffer();
   const uint8_t result = npk.readHoldingRegisters(NPK_FIRST_REGISTER, 3);
@@ -111,12 +117,12 @@ void enqueueReading(const NpkReading &reading) {
   bufferCount++;
 }
 
-void addReading(JsonArray readings, const char *key, float value) {
+void addReading(JsonArray readings, const char *key, float value, bool valid) {
   JsonObject item = readings.add<JsonObject>();
   item["key"] = key;
   item["value"] = value;
   item["unit"] = "mg/kg";
-  item["valid"] = true;
+  item["valid"] = valid;
   item["simulated"] = false;
 }
 
@@ -130,9 +136,10 @@ bool uploadReading(const NpkReading &reading) {
   JsonDocument document;
   document["firmware_version"] = FIRMWARE_VERSION;
   JsonArray readings = document["readings"].to<JsonArray>();
-  addReading(readings, "nitrogen", reading.nitrogen);
-  addReading(readings, "phosphorus", reading.phosphorus);
-  addReading(readings, "potassium", reading.potassium);
+  const bool valid = !allZeroNpk(reading);
+  addReading(readings, "nitrogen", reading.nitrogen, valid);
+  addReading(readings, "phosphorus", reading.phosphorus, valid);
+  addReading(readings, "potassium", reading.potassium, valid);
 
   String body;
   serializeJson(document, body);
@@ -277,6 +284,9 @@ void sendUsbReading() {
     readings["nitrogen"] = reading.nitrogen;
     readings["phosphorus"] = reading.phosphorus;
     readings["potassium"] = reading.potassium;
+    if (allZeroNpk(reading)) {
+      document["warning"] = "Probe responded with all-zero NPK values; check power, soil contact and Modbus settings";
+    }
   } else {
     document["error"] = "NPK sensor did not return a valid Modbus response";
   }

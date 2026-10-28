@@ -68,6 +68,8 @@ type Device = {
   baud_rate: number;
   firmware_version?: string | null;
   status: string;
+  sensor_health?: "ok" | "all_zero" | "invalid";
+  sensor_message?: string | null;
   is_online: boolean;
   last_seen_seconds_ago?: number | null;
   offline_after_seconds?: number;
@@ -143,6 +145,17 @@ function DeviceDetail({
         <div className="mt-5 rounded-2xl border border-[#6d4a3d] bg-[#392922] p-4 text-sm text-[#e3b59d]">
           <p className="font-semibold">This device is not contacting Agrinox.</p>
           <p className="mt-1 leading-6 text-[#c6a99a]">Wi-Fi can be connected while the Agrinox server is still unreachable. Check that this computer and the device use the same network, then scan the USB port and choose <strong>Update firmware</strong> to install automatic heartbeat support.</p>
+        </div>
+      )}
+
+      {device.is_online && device.sensor_health && device.sensor_health !== "ok" && (
+        <div className="mt-5 rounded-2xl border border-[#806a32] bg-[#3a3220] p-4 text-sm text-[#ead391]">
+          <p className="font-semibold">The device is online, but the NPK measurement needs attention.</p>
+          <p className="mt-1 leading-6 text-[#cfbd8b]">{device.sensor_message}</p>
+          <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+            <p className="rounded-lg bg-black/15 p-3"><strong>Power:</strong> use the voltage printed on the probe or specified in its manual; do not assume ESP32 3.3 V is sufficient.</p>
+            <p className="rounded-lg bg-black/15 p-3"><strong>Connection:</strong> share GND, confirm RS485 A/B, and place the probe fully in moist soil.</p>
+          </div>
         </div>
       )}
 

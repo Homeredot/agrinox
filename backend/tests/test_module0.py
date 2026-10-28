@@ -641,6 +641,50 @@ def test_esp32_device_is_assigned_to_field_and_persists_real_reading(client, aut
     assert stale.json()["last_seen_seconds_ago"] >= 600
 
 
+def test_all_zero_npk_batch_is_reported_as_sensor_problem(client, auth):
+    farm_id = client.post("/api/v1/farms", headers=auth, json=farm_payload()).json()["id"]
+    field_id = client.post(
+        f"/api/v1/farms/{farm_id}/fields",
+        headers=auth,
+        json={"name": "NPK plot", "side_a": 10, "side_b": 10, "side_c": 10, "side_d": 10, "side_unit": "m"},
+    ).json()["id"]
+    device = client.post("/api/v1/devices", headers=auth, json={
+        "field_id": field_id,
+        "name": "NPK monitor",
+        "device_uid": "esp32-npk-zero-test",
+        "port": "COM98",
+        "sensors": [
+            {"key": "nitrogen", "name": "Nitrogen", "type": "nitrogen", "unit": "mg/kg"},
+            {"key": "phosphorus", "name": "Phosphorus", "type": "phosphorus", "unit": "mg/kg"},
+            {"key": "potassium", "name": "Potassium", "type": "potassium", "unit": "mg/kg"},
+        ],
+    }).json()
+    credentials = client.post(f"/api/v1/iot/devices/{device['id']}/credentials", headers=auth).json()
+    device_headers = {"X-Device-ID": credentials["device_uid"], "X-Device-Key": credentials["device_key"]}
+
+    zero_batch = client.post("/api/v1/iot/readings", headers=device_headers, json={"readings": [
+        {"key": "nitrogen", "value": 0, "unit": "mg/kg"},
+        {"key": "phosphorus", "value": 0, "unit": "mg/kg"},
+        {"key": "potassium", "value": 0, "unit": "mg/kg"},
+    ]})
+    assert zero_batch.status_code == 200
+    assert zero_batch.json()["accepted"] == 0
+    assert zero_batch.json()["rejected"] == 3
+    assert "returned zero" in zero_batch.json()["warning"]
+    warning_view = client.get(f"/api/v1/devices/{device['id']}", headers=auth).json()
+    assert warning_view["sensor_health"] == "invalid"
+    assert all(sensor["latest_value"] is None for sensor in warning_view["sensors"])
+
+    valid_batch = client.post("/api/v1/iot/readings", headers=device_headers, json={"readings": [
+        {"key": "nitrogen", "value": 24, "unit": "mg/kg"},
+        {"key": "phosphorus", "value": 12, "unit": "mg/kg"},
+        {"key": "potassium", "value": 38, "unit": "mg/kg"},
+    ]})
+    assert valid_batch.json()["accepted"] == 3
+    healthy_view = client.get(f"/api/v1/devices/{device['id']}", headers=auth).json()
+    assert healthy_view["sensor_health"] == "ok"
+
+
 def test_soil_dashboard_combines_context_measurements_and_safe_advice(client, auth):
     farm_id = client.post("/api/v1/farms", headers=auth, json=farm_payload()).json()["id"]
     field_id = client.post(

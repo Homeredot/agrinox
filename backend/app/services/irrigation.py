@@ -70,17 +70,32 @@ def ingest_readings(db: Session, device: Device, payload) -> dict:
     sensors = {sensor.sensor_key.casefold(): sensor for sensor in device.sensors}
     accepted = rejected = simulated = 0
     now = datetime.now(timezone.utc)
+    npk_values = {
+        item.key.casefold(): item.value
+        for item in payload.readings
+        if item.key.casefold() in {"nitrogen", "phosphorus", "potassium"}
+    }
+    all_zero_npk = (
+        set(npk_values) == {"nitrogen", "phosphorus", "potassium"}
+        and all(float(value) == 0.0 for value in npk_values.values())
+    )
     for item in payload.readings:
         sensor = sensors.get(item.key.casefold())
         if not sensor:
             rejected += 1
             continue
         recorded_at = _utc(item.recorded_at)
-        valid = item.valid and _valid_sensor_value(item.key, item.value) and recorded_at <= now + timedelta(minutes=5)
+        valid = (
+            item.valid
+            and _valid_sensor_value(item.key, item.value)
+            and recorded_at <= now + timedelta(minutes=5)
+            and not (all_zero_npk and item.key.casefold() in npk_values)
+        )
         db.add(SensorReading(sensor_id=sensor.id, value=item.value, recorded_at=recorded_at, valid=valid, simulated=item.simulated))
         if item.simulated:
             simulated += 1
         if not valid:
+            sensor.last_read_at = recorded_at
             rejected += 1
             continue
         sensor.latest_value = item.value
@@ -102,7 +117,17 @@ def ingest_readings(db: Session, device: Device, payload) -> dict:
     if payload.firmware_version:
         device.firmware_version = payload.firmware_version
     db.commit()
-    return {"accepted": accepted, "rejected": rejected, "simulated": simulated, "received_at": now.isoformat()}
+    return {
+        "accepted": accepted,
+        "rejected": rejected,
+        "simulated": simulated,
+        "received_at": now.isoformat(),
+        "warning": (
+            "The NPK probe returned zero for nitrogen, phosphorus and potassium. "
+            "The batch was stored as invalid; check probe power, soil contact and Modbus settings."
+            if all_zero_npk else None
+        ),
+    }
 
 
 def get_or_create_config(db: Session, field_id: int) -> IrrigationConfig:

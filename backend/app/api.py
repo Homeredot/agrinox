@@ -1018,6 +1018,31 @@ def device_view(device: Device) -> dict:
         and seconds_since_seen is not None
         and seconds_since_seen <= settings.device_offline_after_seconds
     )
+    npk_sensors = {
+        sensor.sensor_key.casefold(): sensor
+        for sensor in device.sensors
+        if sensor.sensor_key.casefold() in {"nitrogen", "phosphorus", "potassium"}
+    }
+    npk_complete = set(npk_sensors) == {"nitrogen", "phosphorus", "potassium"}
+    npk_all_zero = npk_complete and all(sensor.latest_value == 0 for sensor in npk_sensors.values())
+    npk_invalid_received = (
+        npk_complete
+        and all(sensor.latest_value is None for sensor in npk_sensors.values())
+        and any(sensor.last_read_at is not None for sensor in npk_sensors.values())
+    )
+    sensor_health = "all_zero" if npk_all_zero else ("invalid" if npk_invalid_received else "ok")
+    sensor_message = None
+    if sensor_health == "all_zero":
+        sensor_message = (
+            "The NPK probe is responding, but nitrogen, phosphorus and potassium are all exactly zero. "
+            "Do not use these as soil results. Check the probe supply voltage, common ground, soil contact, "
+            "and the slave address, baud rate and register map in the probe manual."
+        )
+    elif sensor_health == "invalid":
+        sensor_message = (
+            "A sensor response was received but rejected as unreliable. Check probe power, wiring, soil contact "
+            "and the Modbus settings before using the values."
+        )
     return {
         "id": device.id,
         "field_id": device.field_id,
@@ -1038,6 +1063,8 @@ def device_view(device: Device) -> dict:
         "created_at": device.created_at,
         "device_credentials_configured": bool(device.api_key_hash),
         "remote_control_enabled": device.remote_control_enabled,
+        "sensor_health": sensor_health,
+        "sensor_message": sensor_message,
         "sensors": [{
             "id": sensor.id,
             "key": sensor.sensor_key,
@@ -1526,13 +1553,24 @@ def read_device(device_id: int, db: Session = Depends(get_db), user: User = Depe
         payload = exchange(device.port, "AGRINOX_READ", device.baud_rate)
         readings = payload.get("readings", {})
         now = datetime.now(timezone.utc)
+        npk_values = {
+            key: float(readings[key])
+            for key in ("nitrogen", "phosphorus", "potassium")
+            if key in readings
+        }
+        all_zero_npk = (
+            set(npk_values) == {"nitrogen", "phosphorus", "potassium"}
+            and all(value == 0.0 for value in npk_values.values())
+        )
         for sensor in device.sensors:
             if sensor.sensor_key not in readings:
                 continue
             value = float(readings[sensor.sensor_key])
-            sensor.latest_value = value
             sensor.last_read_at = now
-            db.add(SensorReading(sensor_id=sensor.id, value=value, recorded_at=now))
+            valid = not (all_zero_npk and sensor.sensor_key in npk_values)
+            if valid:
+                sensor.latest_value = value
+            db.add(SensorReading(sensor_id=sensor.id, value=value, recorded_at=now, valid=valid))
         device.status = "connected"
         device.last_seen_at = now
         db.commit()
