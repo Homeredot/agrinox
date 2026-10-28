@@ -16,6 +16,7 @@ frontend/out/
 frontend/tsconfig.tsbuildinfo
 .pytest_cache/
 firmware/build/
+firmware/**/wifi_config.h
 disease_dataset/
 archive.zip
 *.zip

@@ -25,6 +25,17 @@
 #include <Preferences.h>
 #include <WiFi.h>
 
+// Optional manual Wi-Fi/API settings. Copy wifi_config.example.h to
+// wifi_config.h and fill it in. The real file is ignored by Git.
+#if __has_include("wifi_config.h")
+#include "wifi_config.h"
+#else
+#define AGRINOX_WIFI_SSID ""
+#define AGRINOX_WIFI_PASSWORD ""
+#define AGRINOX_SERVER_URL ""
+#define AGRINOX_DEVICE_KEY ""
+#endif
+
 // ---------- Your wiring ----------
 constexpr uint8_t RS485_RX_PIN = 16;  // RX2 <- sensor RO
 constexpr uint8_t RS485_TX_PIN = 17;  // TX2 -> sensor DI
@@ -38,7 +49,7 @@ constexpr unsigned long UPLOAD_INTERVAL_MS = 60000;
 constexpr unsigned long HEARTBEAT_INTERVAL_MS = 30000;
 constexpr unsigned long WIFI_RETRY_INTERVAL_MS = 10000;
 constexpr size_t BUFFER_SIZE = 10;
-constexpr char FIRMWARE_VERSION[] = "agrinox-npk-1.2.0";
+constexpr char FIRMWARE_VERSION[] = "agrinox-npk-1.2.1";
 
 HardwareSerial npkSerial(2);
 ModbusMaster npk;
@@ -203,6 +214,13 @@ void loadConfiguration() {
   serverBaseUrl = preferences.getString("server_url", "");
   deviceKey = preferences.getString("device_key", "");
   preferences.end();
+
+  // Non-empty manual values override values previously saved by the Agrinox
+  // dashboard. Leave any value empty to keep using its saved NVS value.
+  if (strlen(AGRINOX_WIFI_SSID) > 0) wifiSsid = AGRINOX_WIFI_SSID;
+  if (strlen(AGRINOX_WIFI_PASSWORD) > 0) wifiPassword = AGRINOX_WIFI_PASSWORD;
+  if (strlen(AGRINOX_SERVER_URL) > 0) serverBaseUrl = AGRINOX_SERVER_URL;
+  if (strlen(AGRINOX_DEVICE_KEY) > 0) deviceKey = AGRINOX_DEVICE_KEY;
 }
 
 void sendConfigurationStatus(bool saved, const char *message) {
