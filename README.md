@@ -8,6 +8,7 @@
 <p align="center"><strong>Connected farm management and decision support built for Rwanda.</strong></p>
 <p align="center">English + Kinyarwanda · Mobile friendly · Field-level records · Explainable advice</p>
 <p>Demo vidoe url <a href="https://drive.google.com/file/d/1hXhyrbK42VihvdSRlae7vd_BH1QyQCZQ/view?usp=sharing">Click here </a></p>
+
 ## What Agrinox does
 
 Agrinox brings farm records, monitoring, planning and practical guidance into one bilingual workspace. Farmers register farms and fields once, then reuse that information across weather, soil, irrigation, crop planning, finance and calendar tools.
